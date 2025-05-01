@@ -8,9 +8,9 @@ export async function getUserTasks(accessToken) {
 }
 
 export async function createTask(accessToken, taskData) {
-  return backendFetch("/api/tasks", {
+  return backendFetch("/api/tasks/", {
     method: "POST",
-    accessToken,
-    taskData,
+    accessToken: accessToken,
+    data: taskData,
   });
 }

@@ -1,34 +1,35 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Box, Heading, Text } from "@chakra-ui/react";
 import { TasksGrid } from "./tasks-grid";
 import { getUserTasks } from "@/lib/api/tasks";
-import { useSession } from "next-auth/react";
 
-export function TaskContainer() {
-  const { data: session } = useSession();
-
+export function TaskContainer({ session }) {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
         const result = await getUserTasks(session.accessToken);
-        setTasks(result);
+        setTasks(result.results);
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
     })();
   }, []);
 
-  const newCount = tasks.results?.filter((task) => task.status == "NEW").length;
-  const inProgressCount = tasks.results?.filter(
+  const appendTask = (task) => {
+    setTasks((prevTasks) => [...prevTasks, task]);
+  };
+
+  const newCount = tasks.filter((task) => task.status == "NEW").length;
+  const inProgressCount = tasks.filter(
     (task) => task.status == "IN_RPOGRESS"
   ).length;
-  const finishedCount = tasks.results?.filter(
+  const finishedCount = tasks.filter(
     (task) => task.status == "COMPLETED" || task.status == "CANCELED"
   ).length;
-
-  console.log(tasks);
 
   return (
     <Box px="16" py="12">
@@ -38,11 +39,13 @@ export function TaskContainer() {
         статусах их выполнения
       </Text>
       <TasksGrid
+        mt="6"
+        accessToken={session?.accessToken}
         newCount={newCount}
         inProgressCount={inProgressCount}
         finishedCount={finishedCount}
-        mt="6"
-        tasks={tasks.results}
+        tasks={tasks}
+        appendTask={appendTask}
       />
     </Box>
   );

@@ -11,7 +11,7 @@ export function parseJwt(token) {
 
     return JSON.parse(jsonPayload);
   } catch (e) {
-    console.error("Ошибка парсинга JWT:", e);
+    console.error("JWT parsing error:", e);
     return null;
   }
 }

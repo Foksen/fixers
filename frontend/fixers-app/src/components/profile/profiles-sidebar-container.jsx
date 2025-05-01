@@ -1,10 +1,9 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { ProfileSidebar } from "./profile-sidebar";
 
-export function ProfileSidebarContainer() {
-  const { data: session } = useSession();
+export function ProfileSidebarContainer({ session }) {
   return (
     <ProfileSidebar
       username={session?.user?.username}

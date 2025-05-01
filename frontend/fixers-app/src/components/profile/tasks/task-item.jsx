@@ -43,7 +43,6 @@ const TaskInfo = ({ title, isLast, isValue }) => (
 );
 
 export function TaskItem({ task }) {
-  console.log(task);
   const created_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
   const modified_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
   return (
@@ -53,6 +52,11 @@ export function TaskItem({ task }) {
       </Text>
       <Table.Root>
         <Table.Body>
+          <Table.Row>
+            <TaskInfo title="Описание" />
+            <TaskInfo isValue title={task.description} />
+          </Table.Row>
+
           <Table.Row>
             <TaskInfo title="Создана" />
             <TaskInfo isValue title={created_at} />

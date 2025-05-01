@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Button,
   Center,
@@ -19,12 +17,23 @@ import {
 } from "@chakra-ui/react";
 import { TaskItem } from "./task-item";
 import { IoSearch } from "react-icons/io5";
+import { Controller, useForm } from "react-hook-form";
+import { createTask } from "@/lib/api/tasks";
 
 const categories = createListCollection({
-  items: [{ label: "Телефон", value: "phone" }],
+  items: [
+    { label: "Телефон", value: 1 },
+    { label: "Ноутбук", value: 2 },
+  ],
 });
 
-const CreateTaskDialog = () => (
+const CreateTaskDialog = ({
+  createTask,
+  onSubmit,
+  errors,
+  isValid,
+  control,
+}) => (
   <Dialog.Root>
     <Dialog.Trigger asChild>
       <Button>Создать заявку</Button>
@@ -32,7 +41,7 @@ const CreateTaskDialog = () => (
     <Portal>
       <Dialog.Backdrop />
       <Dialog.Positioner>
-        <Dialog.Content>
+        <Dialog.Content as="form" onSubmit={onSubmit}>
           <Dialog.Header>
             <Dialog.Title textStyle="2xl">Создание заявки</Dialog.Title>
           </Dialog.Header>
@@ -42,34 +51,55 @@ const CreateTaskDialog = () => (
                 <Field.Root>
                   <Field.Label>Категория</Field.Label>
 
-                  <Select.Root collection={categories}>
-                    <Select.HiddenSelect />
-                    <Select.Control>
-                      <Select.Trigger>
-                        <Select.ValueText placeholder="Выберите категорию" />
-                      </Select.Trigger>
-                      <Select.IndicatorGroup>
-                        <Select.Indicator />
-                      </Select.IndicatorGroup>
-                    </Select.Control>
-                    <Portal>
-                      <Select.Positioner>
-                        <Select.Content zIndex="popover">
-                          {categories.items.map((category) => (
-                            <Select.Item item={category} key={category.value}>
-                              {category.label}
-                              <Select.ItemIndicator />
-                            </Select.Item>
-                          ))}
-                        </Select.Content>
-                      </Select.Positioner>
-                    </Portal>
-                  </Select.Root>
+                  <Controller
+                    control={control}
+                    name="category"
+                    render={({ field }) => {
+                      return (
+                        <Select.Root
+                          name={field.name}
+                          value={field.value}
+                          onValueChange={({ value }) => field.onChange(value)}
+                          onInteractOutside={() => field.onBlur()}
+                          collection={categories}
+                        >
+                          <Select.HiddenSelect />
+                          <Select.Control>
+                            <Select.Trigger>
+                              <Select.ValueText placeholder="Выберите категорию" />
+                            </Select.Trigger>
+                            <Select.IndicatorGroup>
+                              <Select.Indicator />
+                            </Select.IndicatorGroup>
+                          </Select.Control>
+                          <Portal>
+                            <Select.Positioner>
+                              <Select.Content zIndex="popover">
+                                {categories.items.map((category) => (
+                                  <Select.Item
+                                    item={category}
+                                    key={category.value}
+                                  >
+                                    {category.label}
+                                    <Select.ItemIndicator />
+                                  </Select.Item>
+                                ))}
+                              </Select.Content>
+                            </Select.Positioner>
+                          </Portal>
+                        </Select.Root>
+                      );
+                    }}
+                  ></Controller>
                 </Field.Root>
 
                 <Field.Root>
                   <Field.Label>Описание проблемы</Field.Label>
-                  <Textarea />
+                  <Textarea
+                    {...createTask("description", {
+                      required: "Введите описание",
+                    })}
+                  />
                 </Field.Root>
               </Fieldset.Content>
             </Fieldset.Root>
@@ -78,7 +108,11 @@ const CreateTaskDialog = () => (
             <Dialog.ActionTrigger asChild>
               <Button variant="outline">Отменить</Button>
             </Dialog.ActionTrigger>
-            <Button>Создать</Button>
+            <Dialog.ActionTrigger asChild>
+              <Button type="submit" disabled={!isValid}>
+                Создать
+              </Button>
+            </Dialog.ActionTrigger>
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Positioner>
@@ -94,12 +128,36 @@ const SegmentItem = ({ value, title }) => (
 );
 
 export function TasksGrid({
+  accessToken,
   tasks,
+  appendTask,
   newCount,
   inProgressCount,
   finishedCount,
   ...props
 }) {
+  const {
+    register: createTaskForm,
+    handleSubmit: handleSubmitCreateTask,
+    setError: setCreateTaskError,
+    reset: resetCreateTaskForm,
+    control: createTaskControl,
+    formState: { errors: createTaskFormErrors, isValid: isCreateTaskValid },
+  } = useForm({
+    mode: "onChange",
+  });
+
+  const onCreateTaskSubmit = handleSubmitCreateTask(async (data) => {
+    resetCreateTaskForm();
+
+    const category = data.category[0];
+    const description = data.description;
+
+    const result = await createTask(accessToken, { category, description });
+
+    appendTask(result);
+  });
+
   return (
     <VStack align="start" {...props} gap="7">
       <HStack w="full" justify="space-between">
@@ -167,7 +225,13 @@ export function TasksGrid({
           />
         </SegmentGroup.Root>
 
-        <CreateTaskDialog />
+        <CreateTaskDialog
+          createTask={createTaskForm}
+          onSubmit={onCreateTaskSubmit}
+          errors={createTaskFormErrors}
+          isValid={isCreateTaskValid}
+          control={createTaskControl}
+        />
       </HStack>
 
       {tasks == null || tasks.length == 0 ? (
