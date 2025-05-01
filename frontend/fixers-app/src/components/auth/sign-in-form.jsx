@@ -37,6 +37,8 @@ export function SignInForm({
               {...login("email", {
                 required: "Введите почту",
               })}
+              placeholder="email@example.com"
+              type="email"
             />
           </Field.Root>
           <Field.Root>
@@ -45,6 +47,7 @@ export function SignInForm({
               {...login("password", {
                 required: "Введите пароль",
               })}
+              placeholder="qwerty123"
             />
           </Field.Root>
 

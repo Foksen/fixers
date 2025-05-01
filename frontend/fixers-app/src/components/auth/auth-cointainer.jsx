@@ -5,6 +5,21 @@ import { SignUpForm } from "./sign-up-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { registerUser } from "@/lib/api/auth";
+import { toaster } from "../ui/toaster";
+
+function convertAuthErrorMsg(message) {
+  if (message == null) {
+    return "Неизвестная ошибка";
+  }
+  if (message.includes("user with that username already exists")) {
+    return "Указанное имя уже занято";
+  }
+  if (message.includes("user with this email already exists")) {
+    return "Указананя почта уже занята";
+  }
+  return message;
+}
 
 export function AuthContainer() {
   const router = useRouter();
@@ -66,11 +81,68 @@ export function AuthContainer() {
     }
   });
 
+  const onRegisterSubmit = handleSubmitRegister(async (data) => {
+    const username = data.username;
+    const email = data.email;
+    const password = data.password;
+    const repeatedPassword = data.repeatedPassword;
+
+    if (password !== repeatedPassword) {
+      setRegisterError("repeatedPassword", {
+        message: "Пароли не совпадают",
+      });
+      return;
+    }
+
+    try {
+      await registerUser({ email, username, password });
+      resetRegisterForm();
+      setAuthType(AUTH_TYPES.SIGN_IN);
+      toaster.create({
+        description: "Вы успешно зарегистрировались! Теперь можете войти",
+        type: "success",
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error("Registration failed with unknown error");
+      console.log(error.data);
+
+      const usernameErrors = error?.data?.username;
+      const emailErrors = error?.data?.email;
+      const passwordErrors = error?.data?.password;
+
+      if (usernameErrors) {
+        setRegisterError("username", {
+          message: convertAuthErrorMsg(usernameErrors[0]),
+        });
+      }
+
+      if (emailErrors) {
+        setRegisterError("email", {
+          message: convertAuthErrorMsg(emailErrors[0]),
+        });
+      }
+
+      if (passwordErrors) {
+        setRegisterError("password", {
+          message: "Пароль должен быть от 8 до 16 символов",
+        });
+      }
+
+      if (!(usernameErrors || emailErrors || passwordErrors)) {
+        setRegisterError("root", {
+          message: "Неизвестная ошибка",
+        });
+      }
+    }
+  });
+
   const handleToggleForm = () => {
     setAuthType(
       authType === AUTH_TYPES.SIGN_IN ? AUTH_TYPES.SIGN_UP : AUTH_TYPES.SIGN_IN
     );
     resetLoginForm();
+    resetRegisterForm();
   };
 
   return authType === AUTH_TYPES.SIGN_IN ? (
@@ -85,6 +157,12 @@ export function AuthContainer() {
       handleGitHubSignIn={() => signIn("github", { callbackUrl: "/profile" })}
     />
   ) : (
-    <SignUpForm handleToggleForm={handleToggleForm} />
+    <SignUpForm
+      handleToggleForm={handleToggleForm}
+      register={registerForm}
+      onSubmit={onRegisterSubmit}
+      errors={registerErrors}
+      isValid={isRegisterValid}
+    />
   );
 }

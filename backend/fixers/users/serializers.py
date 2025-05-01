@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import User, Role
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=6)
+    password = serializers.CharField(write_only=True, min_length=8)
     role = serializers.ChoiceField(choices=Role.choices, default=Role.CLIENT)
 
     class Meta:
@@ -16,7 +16,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             username=validated_data['username'],
             password=validated_data['password'],
-            auth_provider='email',
             role=validated_data['role']
         )
         return user
@@ -24,4 +23,5 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'auth_provider', 'role', 'created_at', 'modified_at')
+        fields = ('id', 'email', 'username', 'auth_provider', 'role', 'auth_provider', 'created_at', 'modified_at')
+        read_only_fields = ('created_at', 'modified_at', 'auth_provider')

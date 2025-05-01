@@ -30,9 +30,10 @@ export async function backendFetch(
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error("Error during request: ", errorData);
-    throw new Error(errorData.detail || "Request error");
+    const error = new Error("Request error");
+    error.data = await response.json();
+    console.error("Error during request: ", error.data);
+    throw error;
   }
 
   if (response.status === 204) {
