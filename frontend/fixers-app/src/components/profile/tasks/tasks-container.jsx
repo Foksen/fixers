@@ -1,35 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Box, Heading, Text } from "@chakra-ui/react";
 import { TasksGrid } from "./tasks-grid";
-import { getUserTasks } from "@/lib/api/tasks";
 
-export function TaskContainer({ session }) {
-  const [tasks, setTasks] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await getUserTasks(session.accessToken);
-        setTasks(result.results);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    })();
-  }, []);
+export function TaskContainer({ session, initialTasks }) {
+  const [tasks, setTasks] = useState(initialTasks);
 
   const appendTask = (task) => {
     setTasks((prevTasks) => [...prevTasks, task]);
   };
 
-  const newCount = tasks.filter((task) => task.status == "NEW").length;
-  const inProgressCount = tasks.filter(
-    (task) => task.status == "IN_RPOGRESS"
-  ).length;
-  const finishedCount = tasks.filter(
-    (task) => task.status == "COMPLETED" || task.status == "CANCELED"
-  ).length;
+  const newCount = tasks?.filter((task) => task.status == "NEW").length || 0;
+  const inProgressCount =
+    tasks?.filter((task) => task.status == "IN_PROGRESS").length || 0;
+  const finishedCount =
+    tasks?.filter(
+      (task) => task.status == "COMPLETED" || task.status == "CANCELED"
+    ).length || 0;
 
   return (
     <Box px="16" py="12">

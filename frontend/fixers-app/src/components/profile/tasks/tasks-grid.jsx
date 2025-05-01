@@ -163,65 +163,67 @@ export function TasksGrid({
       <HStack w="full" justify="space-between">
         <SegmentGroup.Root defaultValue="new">
           <SegmentGroup.Indicator shadow="xs" borderWidth="1px" />
-
-          <SegmentItem
-            value="new"
-            title={
-              <HStack gap="2">
-                <Text>Новые</Text>
-                {newCount > 0 && (
-                  <Center
-                    rounded="full"
-                    bg="bg.emphasized"
-                    w="6"
-                    h="6"
-                    fontWeight="medium"
-                  >
-                    {newCount}
-                  </Center>
-                )}
-              </HStack>
-            }
-          />
-
-          <SegmentItem
-            value="repair"
-            title={
-              <HStack gap="2">
-                <Text>В ремонте</Text>
-                {{ inProgressCount } > 0 && (
-                  <Center
-                    rounded="full"
-                    bg="bg.emphasized"
-                    w="6"
-                    h="6"
-                    fontWeight="medium"
-                  >
-                    {inProgressCount}
-                  </Center>
-                )}
-              </HStack>
-            }
-          />
-
-          <SegmentItem
-            value="closed"
-            title={
-              <HStack gap="2">
-                <Text>Завершённые</Text>
-                {{ finishedCount } > 0 && (
-                  <Center
-                    rounded="full"
-                    bg="bg.emphasized"
-                    w="6"
-                    h="6"
-                    fontWeight="medium"
-                  >
-                    {finishedCount}
-                  </Center>
-                )}
-              </HStack>
-            }
+          <SegmentGroup.Items
+            cursor="pointer"
+            items={[
+              {
+                value: "new",
+                label: (
+                  <HStack>
+                    Новые
+                    {newCount > 0 && (
+                      <Center
+                        rounded="full"
+                        bg="bg.emphasized"
+                        w="6"
+                        h="6"
+                        fontWeight="medium"
+                      >
+                        {newCount}
+                      </Center>
+                    )}
+                  </HStack>
+                ),
+              },
+              {
+                value: "inProgress",
+                label: (
+                  <HStack>
+                    В ремонте
+                    {inProgressCount > 0 && (
+                      <Center
+                        rounded="full"
+                        bg="bg.emphasized"
+                        w="6"
+                        h="6"
+                        fontWeight="medium"
+                      >
+                        {inProgressCount}
+                      </Center>
+                    )}
+                  </HStack>
+                ),
+              },
+              {
+                value: "finished",
+                label: (
+                  <HStack>
+                    Завершённые
+                    {finishedCount > 0 && (
+                      <Center
+                        rounded="full"
+                        bg="bg.emphasized"
+                        w="6"
+                        h="6"
+                        fontWeight="medium"
+                      >
+                        {finishedCount}
+                      </Center>
+                    )}
+                  </HStack>
+                ),
+              },
+            ]}
           />
         </SegmentGroup.Root>
 
