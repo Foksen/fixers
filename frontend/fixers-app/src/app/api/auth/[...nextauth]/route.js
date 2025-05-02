@@ -59,6 +59,7 @@ export const authOptions = {
           id: decoded?.user_id,
           email: decoded?.email,
           username: decoded?.username,
+          role: decoded?.role,
         };
       }
       return token;

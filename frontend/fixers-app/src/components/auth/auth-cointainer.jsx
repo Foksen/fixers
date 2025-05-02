@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { SignInForm } from "./sign-in-form";
-import { AUTH_TYPES } from "@/constants/auth-types";
+import { AUTH_PAGE } from "@/constants/auth-types";
 import { SignUpForm } from "./sign-up-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -18,13 +18,16 @@ function convertAuthErrorMsg(message) {
   if (message.includes("user with this email already exists")) {
     return "Указананя почта уже занята";
   }
+  if (message.includes("Enter a valid email address")) {
+    return "Введите корректную почту";
+  }
   return message;
 }
 
 export function AuthContainer() {
   const router = useRouter();
 
-  const [authType, setAuthType] = useState(AUTH_TYPES.SIGN_IN);
+  const [authType, setAuthType] = useState(AUTH_PAGE.SIGN_IN);
   const [isLoginSubmitLoading, setIsLoginSubmitLoading] = useState(false);
   const [isLogin2faOpen, setIsLogin2faOpen] = useState(false);
 
@@ -161,7 +164,7 @@ export function AuthContainer() {
     try {
       await registerUser({ email, username, password });
       resetRegisterForm();
-      setAuthType(AUTH_TYPES.SIGN_IN);
+      setAuthType(AUTH_PAGE.SIGN_IN);
       toaster.create({
         description: "Вы успешно зарегистрировались! Теперь можете войти",
         type: "success",
@@ -202,13 +205,13 @@ export function AuthContainer() {
 
   const handleToggleForm = () => {
     setAuthType(
-      authType === AUTH_TYPES.SIGN_IN ? AUTH_TYPES.SIGN_UP : AUTH_TYPES.SIGN_IN
+      authType === AUTH_PAGE.SIGN_IN ? AUTH_PAGE.SIGN_UP : AUTH_PAGE.SIGN_IN
     );
     resetLoginForm();
     resetRegisterForm();
   };
 
-  return authType === AUTH_TYPES.SIGN_IN ? (
+  return authType === AUTH_PAGE.SIGN_IN ? (
     <SignInForm
       handleToggleForm={handleToggleForm}
       login={loginForm}

@@ -8,6 +8,7 @@ export function ProfileSidebarContainer({ session }) {
     <ProfileSidebar
       username={session?.user?.username}
       useravatar={session?.user?.image}
+      role={session?.user?.role}
       signOutHandler={() => signOut({ callbackUrl: "/" })}
     />
   );

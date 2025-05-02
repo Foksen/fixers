@@ -52,13 +52,14 @@ class LoginView(APIView):
                 user=user,
                 defaults={'code': generate_code()}
             )
-            send_mail(
-                'Код авторизации (Fixers)',
-                f'Для авторизации на сайте введите код: {email_code.code}',
-                settings.EMAIL_HOST_USER,
-                [user.email],
-                fail_silently=False
-            )
+            # send_mail(
+            #     'Код авторизации (Fixers)',
+            #     f'Для авторизации на сайте введите код: {email_code.code}',
+            #     settings.EMAIL_HOST_USER,
+            #     [user.email],
+            #     fail_silently=False
+            # )
+            print(f'Authentication code: {email_code.code}')
             return Response({'detail': '2fa_required'}, status=403)
 
         try:

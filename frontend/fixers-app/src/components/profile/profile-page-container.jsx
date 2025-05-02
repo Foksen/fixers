@@ -1,4 +1,8 @@
-import { PROFILE_PAGES_TYPES } from "@/constants/profile-pages";
+import {
+  PROFILE_COMMON_PAGE,
+  PROFILE_PAGE,
+  PROFILE_PAGE_AUTHORITIES,
+} from "@/constants/profile-pages";
 import { TaskContainer } from "./tasks/tasks-container";
 import { SettingsContainer } from "./settings/settings-container";
 import { getUserTasks } from "@/lib/api/tasks";
@@ -14,12 +18,10 @@ const fetchTasks = async (session) => {
 
 export async function ProfilePageContainer({ profilePage, session }) {
   switch (profilePage) {
-    case PROFILE_PAGES_TYPES.MY_TASKS:
-      const initialTasks = await fetchTasks(session)
-      return (
-        <TaskContainer session={session} initialTasks={initialTasks} />
-      );
-    case PROFILE_PAGES_TYPES.SETTINGS:
+    case PROFILE_PAGE.TASKS:
+      const initialTasks = await fetchTasks(session);
+      return <TaskContainer session={session} initialTasks={initialTasks} />;
+    case PROFILE_COMMON_PAGE.SETTINGS:
       return <SettingsContainer />;
     default:
       return null;

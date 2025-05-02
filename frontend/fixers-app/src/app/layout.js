@@ -1,5 +1,4 @@
 import { Provider } from "@/components/ui/provider";
-import { Toaster } from "@chakra-ui/react";
 
 export default function RootLayout({ children }) {
   return (

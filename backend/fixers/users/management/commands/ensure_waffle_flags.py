@@ -4,7 +4,7 @@ from waffle.models import Flag
 WAFFLE_FLAGS = [
     {
         "name": "2fa_enabled",
-        "everyone": False,
+        "everyone": True,
         "note": "Enable 2fa",
     },
     {
