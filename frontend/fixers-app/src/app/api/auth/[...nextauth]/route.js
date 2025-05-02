@@ -18,13 +18,16 @@ export const authOptions = {
         try {
           const response = await loginUser(
             credentials.email,
-            credentials.password
+            credentials.password,
+            credentials.code
           );
 
           if (!response || !response.access || !response.refresh) {
-            throw new Error(
+            const error = new Error(
               "Invalid response from server during authentication"
             );
+            error.data = response.detail;
+            throw error;
           }
 
           return {
@@ -32,8 +35,13 @@ export const authOptions = {
             refreshToken: response.refresh,
           };
         } catch (error) {
-          console.error("Failed to authorize", error);
-          return null;
+          console.error("Authorization failed", error);
+          throw new Error(
+            JSON.stringify({
+              message: "Authorization failed",
+              data: error.data,
+            })
+          );
         }
       },
     }),

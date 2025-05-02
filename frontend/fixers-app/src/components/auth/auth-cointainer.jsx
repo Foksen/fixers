@@ -26,12 +26,15 @@ export function AuthContainer() {
 
   const [authType, setAuthType] = useState(AUTH_TYPES.SIGN_IN);
   const [isLoginSubmitLoading, setIsLoginSubmitLoading] = useState(false);
+  const [isLogin2faOpen, setIsLogin2faOpen] = useState(false);
 
   const {
     register: loginForm,
     handleSubmit: handleSubmitLogin,
     setError: setLoginError,
     reset: resetLoginForm,
+    resetField: resetLoginField,
+    control: loginControl,
     formState: { errors: loginErrors, isValid: isLoginValid },
   } = useForm({
     mode: "onSubmit",
@@ -44,7 +47,7 @@ export function AuthContainer() {
     reset: resetRegisterForm,
     formState: { errors: registerErrors, isValid: isRegisterValid },
   } = useForm({
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   const onLoginSubmit = handleSubmitLogin(async (data) => {
@@ -52,22 +55,82 @@ export function AuthContainer() {
 
     const email = data.email;
     const password = data.password;
+    const code = data.code?.join("");
 
-    const result = await signIn("credentials", {
+    if (!code) {
+      setIsLogin2faOpen(false);
+    }
+
+    const params = {
       redirect: false,
       email,
       password,
+    };
+    if (code) {
+      params.code = code;
+    }
+
+    const result = await signIn("credentials", {
+      ...params,
     });
 
     if (result?.ok) {
       router.push("/profile");
     } else {
-      if (result?.status == 401) {
-        setLoginError("root", {
+      const errorData = JSON.parse(decodeURIComponent(result.error)).data;
+
+      const emailError = errorData?.email;
+      const passwordError = errorData?.password;
+      const errorDetail = errorData?.detail;
+
+      var isProblemDetected = false;
+
+      if (emailError) {
+        setLoginError("email", {
           type: result?.status,
-          message: "Почта не найдена или неверный пароль",
+          message: "Введите корректную почту",
         });
-      } else {
+        isProblemDetected = true;
+      }
+
+      if (passwordError) {
+        setLoginError("password", {
+          type: result?.status,
+          message: "Введите корректный пароль",
+        });
+        isProblemDetected = true;
+      }
+
+      switch (errorDetail) {
+        case "Invalid credentials":
+          setLoginError("root", {
+            type: result?.status,
+            message: "Почта не найдена или неверный пароль",
+          });
+          isProblemDetected = true;
+          break;
+        case "2fa_required":
+          setIsLogin2faOpen(true);
+          isProblemDetected = true;
+          break;
+        case "No code generated":
+          setLoginError("root", {
+            type: result?.status,
+            message:
+              "Не удалось сгенерировать код для двухфакторной аутентификации. Попробуйте войти позднее",
+          });
+          isProblemDetected = true;
+          break;
+        case "Invalid code":
+          setLoginError("code", {
+            type: result?.status,
+            message: "Неверный код",
+          });
+          isProblemDetected = true;
+          break;
+      }
+
+      if (!isProblemDetected) {
         console.error(
           "Authentication failed with unknown error",
           result?.error
@@ -77,6 +140,7 @@ export function AuthContainer() {
           message: "Неизвестная ошибка",
         });
       }
+
       setIsLoginSubmitLoading(false);
     }
   });
@@ -105,7 +169,6 @@ export function AuthContainer() {
       });
     } catch (error) {
       console.error("Registration failed with unknown error");
-      console.log(error.data);
 
       const usernameErrors = error?.data?.username;
       const emailErrors = error?.data?.email;
@@ -149,12 +212,15 @@ export function AuthContainer() {
     <SignInForm
       handleToggleForm={handleToggleForm}
       login={loginForm}
+      loginControl={loginControl}
+      resetField={resetLoginField}
       onSubmit={onLoginSubmit}
       errors={loginErrors}
       isValid={isLoginValid}
       isLoginSubmitLoading={isLoginSubmitLoading}
       handleGoogleSignIn={() => signIn("google", { callbackUrl: "/profile" })}
       handleGitHubSignIn={() => signIn("github", { callbackUrl: "/profile" })}
+      isLogin2faOpen={isLogin2faOpen}
     />
   ) : (
     <SignUpForm

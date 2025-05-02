@@ -7,10 +7,14 @@ export async function registerUser(data) {
   });
 }
 
-export async function loginUser(email, password) {
+export async function loginUser(email, password, code) {
+  const data = { email, password };
+  if (code) {
+    data.code = code;
+  }
   return backendFetch("/api/users/login/", {
     method: "POST",
-    data: { email, password },
+    data: data,
   });
 }
 
