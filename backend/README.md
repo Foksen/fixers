@@ -1,0 +1,1 @@
+Run waffle script: ```python manage.py ensure_waffle_flags```

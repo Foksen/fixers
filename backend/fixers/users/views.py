@@ -1,11 +1,82 @@
+from ipaddress import ip_address
+
+import waffle
+from django.conf import settings
+from django.contrib.auth import authenticate
+from django.core.mail import send_mail
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import User, Role
-from .serializers import RegisterSerializer, UserSerializer
+from .models import User, Role, TrustedIp, EmailAuthCode
+from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
 from .tokens import CustomTokenObtainPairSerializer
+from .utils import get_client_ip, generate_code
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+        code = serializer.validated_data.get('code', None)
+
+        user = authenticate(request, email=email, password=password)
+        if not user:
+            return Response({'detail': 'Invalid credentials'}, status=401)
+
+        ip = get_client_ip(request)
+
+        if not waffle.flag_is_active(request, '2fa_enabled'):
+            tokens = CustomTokenObtainPairSerializer.get_token(user)
+            return Response({
+                'access': str(tokens.access_token),
+                'refresh': str(tokens)
+            })
+
+        if waffle.flag_is_active(request, 'trusted_ips_enabled'):
+            if TrustedIp.objects.filter(user=user, ip_address=ip).exists():
+                tokens = CustomTokenObtainPairSerializer.get_token(user)
+                return Response({
+                    'access': str(tokens.access_token),
+                    'refresh': str(tokens)
+                })
+
+        if not code:
+            email_code, _ = EmailAuthCode.objects.update_or_create(
+                user=user,
+                defaults={'code': generate_code()}
+            )
+            send_mail(
+                'Код авторизации (Fixers)',
+                f'Для авторизации на сайте введите код: {email_code.code}',
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False
+            )
+            return Response({'detail': '2fa_required'}, status=403)
+
+        try:
+            email_auth_code = EmailAuthCode.objects.get(user=user)
+        except EmailAuthCode.DoesNotExist:
+            return Response({'detail': 'No code generated'}, status=400)
+        if email_auth_code.code != code:
+            return Response({'detail': 'Invalid code'}, status=400)
+
+        if waffle.flag_is_active(request, 'trusted_ips_enabled'):
+            TrustedIp.objects.get_or_create(user=user, ip_address=ip)
+        email_auth_code.delete()
+        tokens = CustomTokenObtainPairSerializer.get_token(user)
+        return Response({
+            'access': str(tokens.access_token),
+            'refresh': str(tokens)
+        })
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -29,9 +100,9 @@ class RegisterView(generics.CreateAPIView):
 
         serializer.save()
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    permission_classes = [AllowAny]
-    serializer_class = CustomTokenObtainPairSerializer
+# class CustomTokenObtainPairView(TokenObtainPairView):
+#     permission_classes = [AllowAny]
+#     serializer_class = CustomTokenObtainPairSerializer
 
 class UserMeView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
