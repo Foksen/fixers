@@ -1,9 +1,10 @@
 import { backendFetch } from "./fetcher";
 
-export async function getUserTasks(accessToken) {
+export async function getTasks(accessToken, filters) {
   return backendFetch("/api/tasks/tasks/", {
     method: "GET",
-    accessToken,
+    accessToken: accessToken,
+    filters: filters,
   });
 }
 

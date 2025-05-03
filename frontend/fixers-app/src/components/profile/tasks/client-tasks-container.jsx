@@ -1,21 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getTaskFilterStatus, TaskFilters } from "./filters/task-filters";
 import { useForm } from "react-hook-form";
+import {
+  getTaskFilterMaster,
+  getTaskFilterStatus,
+  TaskFilters,
+} from "./filters/task-filters";
 import { TasksView } from "./tasks-view";
-import { getTasks } from "@/lib/api/tasks";
 
-const fetchTasks = async (session, filters) => {
-  try {
-    const result = await getTasks(session.accessToken, filters);
-    return result.results;
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-  }
-};
-
-export function TasksContainer({ session, initialTasks }) {
+export function ClientTasksContainer({ session, initialTasks }) {
   const { control: filtersControl, watch: filtersWatch } = useForm();
   const [tasks, setTasks] = useState(initialTasks);
   const filterValues = filtersWatch();
@@ -32,13 +26,13 @@ export function TasksContainer({ session, initialTasks }) {
 
   return (
     <TasksView
-      title="Мои заявки"
-      description="На этой странице собрана информация информация о ваших заявках"
+      title="Заявки клиентов"
+      description="На этой странице собрана информация информация о всех заявках клиентов"
       filters={
         <TaskFilters
           mt="6"
           filtersControl={filtersControl}
-          taskFiltersList={[getTaskFilterStatus()]}
+          taskFiltersList={[getTaskFilterStatus(), getTaskFilterMaster()]}
         />
       }
       tasks={tasks}

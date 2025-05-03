@@ -1,30 +1,35 @@
+import { TASK_STATUS } from "@/constants/tasks-status";
 import { Badge, Table, Text, VStack } from "@chakra-ui/react";
 import moment from "moment";
 
-function mapTaskStatusTitle(title) {
-  switch (title) {
-    case "NEW":
+function mapTaskStatusTitle(status) {
+  switch (status) {
+    case TASK_STATUS.NEW:
       return "Новая";
-    case "IN_PROGRESS":
-      return "Выполняется";
-    case "COMPLETED":
-      return "Выполнена";
-    case "CANCELED":
+    case TASK_STATUS.RECEIVED:
+      return "Принята";
+    case TASK_STATUS.PROCESSING:
+      return "В работе";
+    case TASK_STATUS.COMPLETED:
+      return "В работе";
+    case TASK_STATUS.CANCELLED:
       return "Отменена";
+    case TASK_STATUS.REJECTED:
+      return "Отклонена";
     default:
       return "Неизвестно";
   }
 }
 
-function mapTaskStatusColor(title) {
-  switch (title) {
-    case "NEW":
+function mapTaskStatusColor(status) {
+  switch (status) {
+    case TASK_STATUS.NEW:
       return null;
-    case "IN_PROGRESS":
+    case (TASK_STATUS.RECEIVED, TASK_STATUS.PROCESSING):
       return "yellow";
-    case "COMPLETED":
+    case TASK_STATUS.COMPLETED:
       return "green";
-    case "CANCELED":
+    case (TASK_STATUS.CANCELLED, TASK_STATUS.REJECTED):
       return "red";
     default:
       return "pink";
@@ -42,7 +47,7 @@ const TaskInfo = ({ title, isLast, isValue }) => (
   </Table.Cell>
 );
 
-export function TaskItem({ task }) {
+export function TaskGridItem({ task }) {
   const created_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
   const modified_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
   return (

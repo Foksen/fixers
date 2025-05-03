@@ -6,9 +6,10 @@ export const PROFILE_COMMON_PAGE = {
 
 export const PROFILE_PAGE = {
   TASKS: "tasks",
+  CLIENT_TASKS: "client-tasks",
+  WORKING_TASTS: "working-tasks",
   MASTERS: "masters",
   USERS: "users",
-  CLIENT_TASKS: "client-tasks",
   SERVICE_CENTERS: "service-centers",
   MESSAGES: "messages",
   CATEGORIES: "categories",
@@ -24,6 +25,7 @@ PROFILE_PAGE_AUTHORITIES[USER_ROLE.CLIENT] = [
 
 PROFILE_PAGE_AUTHORITIES[USER_ROLE.MASTER] = [
   PROFILE_PAGE.CLIENT_TASKS,
+  PROFILE_PAGE.WORKING_TASTS,
   PROFILE_PAGE.MESSAGES,
 ];
 
