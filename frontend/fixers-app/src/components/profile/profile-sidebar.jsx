@@ -108,7 +108,7 @@ function createSidebarLink(profilePage, key) {
         <SidebarLink
           title="Пользователи"
           icon={<TbUsers />}
-          disabled
+          href={href}
           key={key}
         />
       );

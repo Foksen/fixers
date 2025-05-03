@@ -4,6 +4,7 @@ import { getCategories, getServiceCenters, getTasks } from "@/lib/api/tasks";
 import { TasksContainer } from "./tasks/containers/tasks-container";
 import { ClientTasksContainer } from "./tasks/containers/client-tasks-container";
 import { WorkingTasksContainer } from "./tasks/containers/working-tasks-container";
+import { UsersContainer } from "./users/users-conainter";
 
 const fetchTasks = async (session) => {
   try {
@@ -71,6 +72,9 @@ export async function ProfilePageContainer({ profilePage, session }) {
           initialServiceCenters={await fetchServiceCenters()}
         />
       );
+
+    case PROFILE_PAGE.USERS:
+      return <UsersContainer />;
 
     case PROFILE_COMMON_PAGE.SETTINGS:
       return <SettingsContainer />;

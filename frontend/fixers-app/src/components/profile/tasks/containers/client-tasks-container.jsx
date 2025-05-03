@@ -8,11 +8,12 @@ import {
   getTaskFilterStatus,
   TaskFilters,
 } from "./../filters/task-filters";
-import { TasksView } from "./../tasks-view";
 import { mapFilters } from "@/lib/utils/map-filters";
 import { getTasks } from "@/lib/api/tasks";
 import debounce from "debounce";
 import { DEBOUNCE_WAIT_MS } from "@/constants/api";
+import { TasksContent } from "../tasks-content";
+import { ProfilePageView } from "../../profile-page-view";
 
 const fetchTasks = async (session, filters) => {
   try {
@@ -56,20 +57,20 @@ export function ClientTasksContainer({
   }, [filterValues]);
 
   return (
-    <TasksView
+    <ProfilePageView
       title="Заявки клиентов"
       description="На этой странице собрана информация информация о всех заявках клиентов"
-      filters={
-        <TaskFilters
-          filtersControl={filtersControl}
-          taskFiltersList={[
+      content={TasksContent({
+        filters: TaskFilters({
+          filtersControl: filtersControl,
+          taskFiltersList: [
             getTaskFilterStatus(),
             getTaskFilterCategory(initialCategories),
             getTaskFilterServiceCenter(initialServiceCenters),
-          ]}
-        />
-      }
-      tasks={tasks}
+          ],
+        }),
+        tasks: tasks,
+      })}
     />
   );
 }

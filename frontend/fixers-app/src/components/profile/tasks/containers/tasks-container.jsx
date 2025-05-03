@@ -3,11 +3,12 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { getTaskFilterStatus, TaskFilters } from "./../filters/task-filters";
 import { useForm, useWatch } from "react-hook-form";
-import { TasksView } from "./../tasks-view";
 import { getTasks } from "@/lib/api/tasks";
 import debounce from "debounce";
 import { mapFilters } from "@/lib/utils/map-filters";
 import { DEBOUNCE_WAIT_MS } from "@/constants/api";
+import { TasksContent } from "../tasks-content";
+import { ProfilePageView } from "../../profile-page-view";
 
 const fetchTasks = async (session, filters) => {
   try {
@@ -46,16 +47,16 @@ export function TasksContainer({ session, initialTasks }) {
   }, [filterValues]);
 
   return (
-    <TasksView
+    <ProfilePageView
       title="Мои заявки"
       description="На этой странице собрана информация информация о ваших заявках"
-      filters={
-        <TaskFilters
-          filtersControl={filtersControl}
-          taskFiltersList={[getTaskFilterStatus()]}
-        />
-      }
-      tasks={tasks}
+      content={TasksContent({
+        filters: TaskFilters({
+          filtersControl: filtersControl,
+          taskFiltersList: [getTaskFilterStatus()],
+        }),
+        tasks: tasks,
+      })}
     />
   );
 }
