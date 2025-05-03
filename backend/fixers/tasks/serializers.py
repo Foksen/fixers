@@ -15,6 +15,10 @@ class ServiceCenterSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    service_center_name = serializers.CharField(source='service_center.name', read_only=True)
+    master_username = serializers.CharField(source='master.username', read_only=True)
+
     class Meta:
         model = Task
         fields = '__all__'

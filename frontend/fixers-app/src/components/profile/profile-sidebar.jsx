@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import {
   HiOutlineDocumentDuplicate,
+  HiOutlineDocumentSearch,
   HiOutlineDocumentText,
 } from "react-icons/hi";
 import { PiSignOut } from "react-icons/pi";
@@ -120,9 +121,19 @@ function createSidebarLink(profilePage, key) {
     case PROFILE_PAGE.CLIENT_TASKS:
       return (
         <SidebarLink
-          title="Заявки клиентов"
+          title="Все заявки"
+          icon={<HiOutlineDocumentSearch />}
+          href={href}
+          key={key}
+        />
+      );
+
+    case PROFILE_PAGE.WORKING_TASTS:
+      return (
+        <SidebarLink
+          title="Заявки в работе"
           icon={<HiOutlineDocumentDuplicate />}
-          disabled
+          href={href}
           key={key}
         />
       );

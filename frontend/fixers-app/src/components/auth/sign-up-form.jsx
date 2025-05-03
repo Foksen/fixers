@@ -9,7 +9,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { PasswordInput } from "../ui/password-input";
-import { Toaster } from "../ui/toaster";
 
 export function SignUpForm({
   handleToggleForm,

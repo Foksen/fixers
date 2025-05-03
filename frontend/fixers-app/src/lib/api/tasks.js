@@ -1,9 +1,22 @@
 import { backendFetch } from "./fetcher";
 
-export async function getUserTasks(accessToken) {
-  return backendFetch("/api/tasks/tasks/", {
+export async function getCategories() {
+  return backendFetch("/api/tasks/categories/", {
     method: "GET",
-    accessToken,
+  });
+}
+
+export async function getServiceCenters() {
+  return backendFetch("/api/tasks/service-centers/", {
+    method: "GET",
+  });
+}
+
+export async function getTasks(accessToken, filters) {
+  return backendFetch("/api/tasks/tasks", {
+    method: "GET",
+    accessToken: accessToken,
+    params: filters,
   });
 }
 

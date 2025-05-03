@@ -18,15 +18,19 @@ export async function backendFetch(
   if (params && typeof params === "object") {
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        fullUrl.searchParams.append(key, value);
+        const multipleFieldsKey = `${value}`.includes(",") ? `${key}__in` : key;
+        fullUrl.searchParams.append(multipleFieldsKey, value);
       }
     });
   }
+
+  console.log(fullUrl.toString());
 
   const response = await fetch(fullUrl.toString(), {
     method,
     headers,
     body: data && method !== "GET" ? JSON.stringify(data) : null,
+    credentials: "include",
   });
 
   if (!response.ok) {
