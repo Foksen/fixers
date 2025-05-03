@@ -26,9 +26,9 @@ import {
 } from "react-icons/hi";
 import { PiSignOut } from "react-icons/pi";
 import {
+  TbBell,
   TbBuildings,
   TbCategory2,
-  TbMessageDots,
   TbSettings,
   TbUsers,
   TbUserSearch,
@@ -88,14 +88,9 @@ function createSidebarLink(profilePage, key) {
         />
       );
 
-    case PROFILE_PAGE.MESSAGES:
+    case PROFILE_PAGE.NOTIFICATIONS:
       return (
-        <SidebarLink
-          title="Сообщения"
-          icon={<TbMessageDots />}
-          disabled
-          key={key}
-        />
+        <SidebarLink title="Уведомления" icon={<TbBell />} disabled key={key} />
       );
 
     case PROFILE_PAGE.MASTERS:
