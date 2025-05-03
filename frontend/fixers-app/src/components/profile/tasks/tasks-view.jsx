@@ -9,18 +9,12 @@ export function TasksView({ title, description, filters, actions, tasks }) {
         {description}
       </Text>
 
-      <HStack justufyContent="space-between">
+      <HStack mt="4" justufyContent="space-between">
         {filters}
         {actions}
       </HStack>
 
-      {/* <TaskFilters
-        mt="6"
-        filtersControl={filtersControl}
-        taskFiltersList={[getTaskFilterStatus(), getTaskFilterMaster()]}
-      /> */}
-
-      <TaskGrid mt="10" tasks={tasks} />
+      <TaskGrid mt="8" tasks={tasks} />
     </Box>
   );
 }

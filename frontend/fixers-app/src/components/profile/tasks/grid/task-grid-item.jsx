@@ -11,8 +11,8 @@ function mapTaskStatusTitle(status) {
     case TASK_STATUS.PROCESSING:
       return "В работе";
     case TASK_STATUS.COMPLETED:
-      return "В работе";
-    case TASK_STATUS.CANCELLED:
+      return "Завершена";
+    case TASK_STATUS.CANCELED:
       return "Отменена";
     case TASK_STATUS.REJECTED:
       return "Отклонена";
@@ -29,7 +29,7 @@ function mapTaskStatusColor(status) {
       return "yellow";
     case TASK_STATUS.COMPLETED:
       return "green";
-    case (TASK_STATUS.CANCELLED, TASK_STATUS.REJECTED):
+    case (TASK_STATUS.CANCELED, TASK_STATUS.REJECTED):
       return "red";
     default:
       return "pink";
@@ -60,6 +60,16 @@ export function TaskGridItem({ task }) {
           <Table.Row>
             <TaskInfo title="Описание" />
             <TaskInfo isValue title={task.description} />
+          </Table.Row>
+
+          <Table.Row>
+            <TaskInfo title="Вид ремонта" />
+            <TaskInfo isValue title={task.category_name} />
+          </Table.Row>
+
+          <Table.Row>
+            <TaskInfo title="Мастер" />
+            <TaskInfo isValue title={task.master_username || "—"} />
           </Table.Row>
 
           <Table.Row>

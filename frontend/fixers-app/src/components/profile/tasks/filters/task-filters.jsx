@@ -13,7 +13,7 @@ export const getTaskFilterStatus = () =>
         { value: TASK_STATUS.RECEIVED.toUpperCase(), label: "Принятые" },
         { value: TASK_STATUS.PROCESSING.toUpperCase(), label: "В работе" },
         { value: TASK_STATUS.COMPLETED.toUpperCase(), label: "Завершённые" },
-        { value: TASK_STATUS.CANCELLED.toUpperCase(), label: "Отменённые" },
+        { value: TASK_STATUS.CANCELED.toUpperCase(), label: "Отменённые" },
         { value: TASK_STATUS.REJECTED.toUpperCase(), label: "Отклонённые" },
       ],
     })
@@ -30,6 +30,30 @@ export const getTaskFilterMaster = () =>
         { value: "me", label: "Я" },
         { value: "notMe", label: "Не я" },
       ],
+    })
+  );
+
+export const getTaskFilterCategory = (categoriesData) =>
+  new TaskFilterModel(
+    "Вид ремонта",
+    "category",
+    createListCollection({
+      items: categoriesData.map((item) => ({
+        value: item.id,
+        label: item.name,
+      })),
+    })
+  );
+
+export const getTaskFilterServiceCenter = (serviceCentersData) =>
+  new TaskFilterModel(
+    "Сервисный центр",
+    "service_center",
+    createListCollection({
+      items: serviceCentersData.map((item) => ({
+        value: item.id,
+        label: item.name,
+      })),
     })
   );
 

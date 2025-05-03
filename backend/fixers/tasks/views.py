@@ -14,14 +14,6 @@ class TaskCategoryViewSet(viewsets.ModelViewSet):
     serializer_class = TaskCategorySerializer
     permission_classes = [AllowAny]
 
-    def list(self, request, *args, **kwargs):
-        print("TaskCategoryViewSet.list вызван!")
-        return super().list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        print("TaskCategoryViewSet.retrieve вызван!")
-        return super().retrieve(request, *args, **kwargs)
-
 
 class ServiceCenterViewSet(viewsets.ModelViewSet):
     queryset = ServiceCenter.objects.all()
@@ -32,7 +24,13 @@ class ServiceCenterViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['status', 'category', 'service_center', 'client', 'master']
+    filterset_fields = {
+        'status': ['in', 'exact'],
+        'category': ['in', 'exact'],
+        'service_center': ['in', 'exact'],
+        'client': ['in', 'exact'],
+        'master': ['in', 'exact'],
+    }
     ordering_fields = ['created_at', 'modified_at']
 
     def get_queryset(self):

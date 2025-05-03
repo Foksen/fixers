@@ -8,7 +8,7 @@ export function TaskFilter({ filterControl, taskFilter }) {
       name={taskFilter.name}
       render={({ field }) => (
         <Select.Root
-          w="60"
+          w="48"
           multiple
           name={field.name}
           value={field.value}

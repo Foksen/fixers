@@ -1,9 +1,9 @@
 import { PROFILE_COMMON_PAGE, PROFILE_PAGE } from "@/constants/profile-pages";
 import { SettingsContainer } from "./settings/settings-container";
-import { getTasks } from "@/lib/api/tasks";
-import { TasksContainer } from "./tasks/tasks-container";
-import { ClientTasksContainer } from "./tasks/client-tasks-container";
-import { WorkingTasksContainer } from "./tasks/working-tasks-container";
+import { getCategories, getServiceCenters, getTasks } from "@/lib/api/tasks";
+import { TasksContainer } from "./tasks/containers/tasks-container";
+import { ClientTasksContainer } from "./tasks/containers/client-tasks-container";
+import { WorkingTasksContainer } from "./tasks/containers/working-tasks-container";
 
 const fetchTasks = async (session) => {
   try {
@@ -11,6 +11,37 @@ const fetchTasks = async (session) => {
     return result.results;
   } catch (error) {
     console.error("Error fetching tasks:", error);
+  }
+};
+
+const fetchMasterTasks = async (session) => {
+  try {
+    const masterId = session?.user?.id;
+    if (!masterId) {
+      throw new Error("Cannot get master id from session");
+    }
+    const result = await getTasks(session.accessToken, { master: masterId });
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+  }
+};
+
+const fetchCategories = async () => {
+  try {
+    const result = await getCategories();
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+};
+
+const fetchServiceCenters = async () => {
+  try {
+    const result = await getServiceCenters();
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching service centers:", error);
   }
 };
 
@@ -26,15 +57,18 @@ export async function ProfilePageContainer({ profilePage, session }) {
         <ClientTasksContainer
           session={session}
           initialTasks={initialClientTasks}
+          initialCategories={await fetchCategories()}
+          initialServiceCenters={await fetchServiceCenters()}
         />
       );
 
     case PROFILE_PAGE.WORKING_TASTS:
-      const initialWorkingTasks = await fetchTasks(session);
       return (
         <WorkingTasksContainer
           session={session}
-          initialTasks={initialWorkingTasks}
+          initialTasks={await fetchMasterTasks(session)}
+          initialCategories={await fetchCategories()}
+          initialServiceCenters={await fetchServiceCenters()}
         />
       );
 
