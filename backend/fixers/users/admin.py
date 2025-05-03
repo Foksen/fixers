@@ -11,10 +11,10 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('id',)
     search_fields = ('id', 'email', 'username')
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('auth_provider', 'role', 'created_at', 'modified_at')}),
+        ("Technical information", {'fields': ('auth_provider', 'role', 'created_at', 'modified_at')}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('auth_provider', 'role')}),
+        ("Technical information", {'fields': ('auth_provider', 'role')}),
     )
     readonly_fields = ('id', 'created_at', 'modified_at')
 
