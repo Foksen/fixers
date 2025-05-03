@@ -101,9 +101,6 @@ class RegisterView(generics.CreateAPIView):
 
         serializer.save()
 
-# class CustomTokenObtainPairView(TokenObtainPairView):
-#     permission_classes = [AllowAny]
-#     serializer_class = CustomTokenObtainPairSerializer
 
 class UserMeView(generics.RetrieveAPIView):
     serializer_class = UserSerializer

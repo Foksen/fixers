@@ -1,10 +1,18 @@
 from rest_framework import serializers
-from .models import Task, TaskCategory
+from .models import Task, TaskCategory, ServiceCenter
+
 
 class TaskCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskCategory
         fields = '__all__'
+
+
+class ServiceCenterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceCenter
+        fields = '__all__'
+
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:

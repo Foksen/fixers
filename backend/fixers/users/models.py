@@ -2,14 +2,18 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class AuthProvider(models.TextChoices):
     EMAIL = 'EMAIL', 'Email'
     GOOGLE = 'GOOGLE', 'Google'
+    GITHUB = 'GITHUB', 'Github'
+
 
 class Role(models.TextChoices):
     CLIENT = 'CLIENT', 'Client'
     MASTER = 'MASTER', 'Master'
     MODERATOR = 'MODERATOR', 'Moderator'
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
