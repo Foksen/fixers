@@ -5,6 +5,7 @@ import { TasksContainer } from "./tasks/containers/tasks-container";
 import { ClientTasksContainer } from "./tasks/containers/client-tasks-container";
 import { WorkingTasksContainer } from "./tasks/containers/working-tasks-container";
 import { UsersContainer } from "./users/users-conainter";
+import { getUserInfos } from "@/lib/api/user";
 
 const fetchTasks = async (session) => {
   try {
@@ -46,6 +47,15 @@ const fetchServiceCenters = async () => {
   }
 };
 
+const fetchUserInfos = async (session) => {
+  try {
+    const result = await getUserInfos(session.accessToken);
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching user infos: ", error);
+  }
+};
+
 export async function ProfilePageContainer({ profilePage, session }) {
   switch (profilePage) {
     case PROFILE_PAGE.TASKS:
@@ -74,7 +84,9 @@ export async function ProfilePageContainer({ profilePage, session }) {
       );
 
     case PROFILE_PAGE.USERS:
-      return <UsersContainer />;
+      return (
+        <UsersContainer initialUserInfos={await fetchUserInfos(session)} />
+      );
 
     case PROFILE_COMMON_PAGE.SETTINGS:
       return <SettingsContainer />;

@@ -1,6 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { ProfilePageContainer } from "@/components/profile/profile-page-container";
-import { ProfileSidebarContainer } from "@/components/profile/profiles-sidebar-container";
+import { ProfileSidebarContainer } from "@/components/profile/profile-sidebar-container";
 import { Box } from "@chakra-ui/react";
 import { getServerSession } from "next-auth";
 

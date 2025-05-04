@@ -2,10 +2,12 @@ from rest_framework import serializers
 
 from .models import User, Role
 
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
     code = serializers.CharField(required=False, allow_blank=True)
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
@@ -25,8 +27,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'username', 'auth_provider', 'role', 'auth_provider', 'created_at', 'modified_at')
         read_only_fields = ('created_at', 'modified_at', 'auth_provider')
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "email", "username", "role"]

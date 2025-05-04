@@ -1,9 +1,12 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { ProfilePageView } from "../profile-page-view";
+import { UsersTable } from "./users-table";
 
-export function UsersContainer() {
+export function UsersContainer({ initialUserInfos }) {
   return (
-    <Box px="16" py="12">
-      <Heading textStyle="2xl">Ваши заявки на ремонт</Heading>
-    </Box>
+    <ProfilePageView
+      title="Пользователи"
+      description="Страница для управления пользователями сервиса"
+      content={<UsersTable usersInfos={initialUserInfos} />}
+    />
   );
 }

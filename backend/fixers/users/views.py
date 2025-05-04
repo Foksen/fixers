@@ -1,17 +1,14 @@
-from ipaddress import ip_address
-
 import waffle
-from django.conf import settings
 from django.contrib.auth import authenticate
-from django.core.mail import send_mail
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User, Role, TrustedIp, EmailAuthCode
-from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
+from .permissions import IsMasterOrModerator
+from .serializers import RegisterSerializer, UserSerializer, LoginSerializer, UserInfoSerializer
 from .tokens import CustomTokenObtainPairSerializer
 from .utils import get_client_ip, generate_code
 
@@ -107,3 +104,9 @@ class UserMeView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserInfosViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserInfoSerializer
+    permission_classes = [IsAuthenticated & IsMasterOrModerator]
