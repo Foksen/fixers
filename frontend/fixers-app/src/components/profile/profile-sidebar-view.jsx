@@ -3,18 +3,19 @@ import {
   PROFILE_PAGE,
   PROFILE_PAGE_AUTHORITIES,
 } from "@/constants/profile-pages";
+import { RAINBOW_AVATAR_COLORS } from "@/constants/ui";
 import { roleToView, USER_ROLE } from "@/constants/user-roles";
 import { pickPalette } from "@/util/pick-palette";
 import {
   Avatar,
   AvatarGroup,
   Button,
+  Center,
   Flex,
   HStack,
   Icon,
   SkeletonCircle,
   SkeletonText,
-  StackSeparator,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -31,8 +32,30 @@ import {
   TbCategory2,
   TbSettings,
   TbUsers,
-  TbUserSearch,
 } from "react-icons/tb";
+
+function mapNotificationsLinkLabel(newNotificationsCount) {
+  if (!(newNotificationsCount > 0)) {
+    return "Уведомления";
+  }
+
+  return (
+    <HStack position="relative" w="full" justifyContent="space-between">
+      <Text>Уведомления</Text>
+      <Center
+        position="absolute"
+        w="7"
+        h="7"
+        right="0"
+        align="center"
+        bg="yellow.solid"
+        rounded="full"
+      >
+        {newNotificationsCount}
+      </Center>
+    </HStack>
+  );
+}
 
 const SidebarLink = ({ title, icon, href, ...props }) => (
   <Button
@@ -40,6 +63,7 @@ const SidebarLink = ({ title, icon, href, ...props }) => (
     borderRadius="none"
     w="full"
     px="3"
+    py="5"
     justifyContent="flex-start"
     rounded="md"
     asChild
@@ -55,7 +79,11 @@ const SidebarProfile = ({ username, useravatar, role, ...props }) => (
   <HStack gap="3" {...props}>
     {username ? (
       <AvatarGroup size="sm">
-        <Avatar.Root colorPalette={pickPalette(username)}>
+        <Avatar.Root
+          colorPalette={
+            RAINBOW_AVATAR_COLORS ? pickPalette(username) : "yellow"
+          }
+        >
           <Avatar.Fallback name={username} />
           {useravatar && <Avatar.Image src={useravatar} />}
         </Avatar.Root>
@@ -87,21 +115,6 @@ function createSidebarLink(profilePage, key) {
           key={key}
         />
       );
-
-    case PROFILE_PAGE.NOTIFICATIONS:
-      return (
-        <SidebarLink title="Уведомления" icon={<TbBell />} disabled key={key} />
-      );
-
-    // case PROFILE_PAGE.MASTERS:
-    //   return (
-    //     <SidebarLink
-    //       title="Мастеры"
-    //       icon={<TbUserSearch />}
-    //       disabled
-    //       key={key}
-    //     />
-    //   );
 
     case PROFILE_PAGE.USERS:
       return (
@@ -152,20 +165,16 @@ function createSidebarLink(profilePage, key) {
           key={key}
         />
       );
-
-    case PROFILE_COMMON_PAGE.SETTINGS:
-      return (
-        <SidebarLink
-          title="Настройки"
-          icon={<TbSettings />}
-          href={href}
-          key={key}
-        />
-      );
   }
 }
 
-export function ProfileSidebar({ username, useravatar, role, signOutHandler }) {
+export function ProfileSidebarView({
+  username,
+  useravatar,
+  role,
+  newNotificationsCount,
+  signOutHandler,
+}) {
   const availableRolePages = PROFILE_PAGE_AUTHORITIES[role];
 
   return (
@@ -182,28 +191,33 @@ export function ProfileSidebar({ username, useravatar, role, signOutHandler }) {
         name=""
         py="4"
         px="3"
-        borderBottomWidth="1px"
         username={username}
         useravatar={useravatar}
         role={role}
       />
-      <VStack w="full" mt="2" gap="1" separator={<StackSeparator />}>
-        <VStack w="full" gap="1" px="1">
-          {availableRolePages.map((page, index) =>
-            createSidebarLink(page, index)
-          )}
-        </VStack>
+      <VStack w="full" gap="1" px="1">
+        {availableRolePages.map((page, index) =>
+          createSidebarLink(page, index)
+        )}
 
-        <VStack w="full" gap="1" px="1">
-          {Object.values(PROFILE_COMMON_PAGE).map((page, index) =>
-            createSidebarLink(page, index)
-          )}
-          <SidebarLink
-            title="Выйти"
-            icon={<PiSignOut />}
-            onClick={signOutHandler}
-          />
-        </VStack>
+        <SidebarLink
+          title={mapNotificationsLinkLabel(newNotificationsCount)}
+          icon={<TbBell />}
+          href={`/profile/${PROFILE_COMMON_PAGE.NOTIFICATIONS}`}
+        />
+
+        <SidebarLink
+          title="Настройки"
+          icon={<TbSettings />}
+          href={`/profile/${PROFILE_COMMON_PAGE.SETTINGS}`}
+        />
+
+        <SidebarLink
+          title="Выйти"
+          icon={<PiSignOut />}
+          onClick={signOutHandler}
+          _hover={{ bg: "bg.error", color: "fg.error" }}
+        />
       </VStack>
     </Flex>
   );
