@@ -9,6 +9,8 @@ import { mapFilters } from "@/lib/utils/map-filters";
 import { DEBOUNCE_WAIT_MS } from "@/constants/api";
 import { TasksContent } from "../tasks-content";
 import { ProfilePageView } from "../../profile-page-view";
+import { TasksActionsContainer } from "../actions/tasks-actions-container";
+import { TasksActionCreate } from "../actions/tasks-action-create";
 
 const fetchTasks = async (session, filters) => {
   try {
@@ -19,7 +21,12 @@ const fetchTasks = async (session, filters) => {
   }
 };
 
-export function TasksContainer({ session, initialTasks }) {
+export function TasksContainer({
+  session,
+  initialTasks,
+  initialCategories,
+  initialServiceCenters,
+}) {
   const firstRender = useRef(true);
 
   const [tasks, setTasks] = useState(initialTasks);
@@ -55,6 +62,20 @@ export function TasksContainer({ session, initialTasks }) {
           filtersControl: filtersControl,
           taskFiltersList: [getTaskFilterStatus()],
         }),
+        actionsContainer: (
+          <TasksActionsContainer>
+            <TasksActionCreate
+              session={session}
+              initialCategories={initialCategories}
+              initialServiceCenters={initialServiceCenters}
+              filterTasks={() => {
+                const filtersData = mapFilters(filterValues);
+                fitlerTasks(filtersData);
+              }}
+            />
+          </TasksActionsContainer>
+        ),
+
         tasks: tasks,
       })}
     />

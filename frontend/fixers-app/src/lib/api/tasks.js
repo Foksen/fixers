@@ -1,8 +1,9 @@
 import { backendFetch } from "./fetcher";
 
-export async function getCategories() {
+export async function getCategories(filters) {
   return backendFetch("/api/tasks/categories/", {
     method: "GET",
+    params: filters,
   });
 }
 
@@ -13,9 +14,10 @@ export async function getCategoriesInfos(accessToken) {
   });
 }
 
-export async function getServiceCenters() {
+export async function getServiceCenters(filters) {
   return backendFetch("/api/tasks/service-centers/", {
     method: "GET",
+    params: filters,
   });
 }
 

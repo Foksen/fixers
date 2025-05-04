@@ -37,18 +37,18 @@ const fetchMasterTasks = async (session) => {
   }
 };
 
-const fetchCategories = async () => {
+const fetchCategories = async (filters) => {
   try {
-    const result = await getCategories();
+    const result = await getCategories(filters);
     return result.results;
   } catch (error) {
     console.error("Error fetching categories:", error);
   }
 };
 
-const fetchServiceCenters = async () => {
+const fetchServiceCenters = async (filters) => {
   try {
-    const result = await getServiceCenters();
+    const result = await getServiceCenters(filters);
     return result.results;
   } catch (error) {
     console.error("Error fetching service centers:", error);
@@ -85,8 +85,14 @@ const fetchServiceCentersInfos = async (session) => {
 export async function ProfilePageContainer({ profilePage, session }) {
   switch (profilePage) {
     case PROFILE_PAGE.TASKS:
-      const initialTasks = await fetchTasks(session);
-      return <TasksContainer session={session} initialTasks={initialTasks} />;
+      return (
+        <TasksContainer
+          session={session}
+          initialTasks={await fetchTasks(session)}
+          initialCategories={await fetchCategories({ published: true })}
+          initialServiceCenters={await fetchServiceCenters({ published: true })}
+        />
+      );
 
     case PROFILE_PAGE.CLIENT_TASKS:
       const initialClientTasks = await fetchTasks(session);
