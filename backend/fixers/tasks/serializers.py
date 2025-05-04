@@ -5,7 +5,7 @@ from .models import Task, TaskCategory, ServiceCenter
 class TaskCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskCategory
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'published']
 
 
 class TaskCategoryInfoSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class TaskCategoryInfoSerializer(serializers.ModelSerializer):
 class ServiceCenterSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceCenter
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'published']
 
 
 class ServiceCenterInfoSerializer(serializers.ModelSerializer):
@@ -39,3 +39,28 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = '__all__'
         read_only_fields = ['client', 'master', 'created_at', 'modified_at']
+
+    def validate(self, attrs):
+        errors = {}
+
+        if self.instance is None:
+            category = attrs.get("category")
+            service_center = attrs.get("service_center")
+
+            if category and not category.published:
+                errors["category"] = "Category is unavailable"
+            if service_center and not service_center.published:
+                errors["service_center"] = "Service center is unavailable"
+
+        elif "category" in attrs:
+            category = attrs["category"]
+            if category and not category.published:
+                errors["category"] = "Category is unavailable"
+
+            service_center = attrs["service_center"]
+            if service_center and not service_center.published:
+                errors["service_center"] = "Service center is unavailable"
+
+        if errors:
+            raise serializers.ValidationError(errors)
+        return attrs

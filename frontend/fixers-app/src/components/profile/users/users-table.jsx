@@ -39,7 +39,7 @@ function mapUserRoleIcon(role) {
   }
 }
 
-function userRoleBadge(role) {
+function UserRoleBadge({ role }) {
   return (
     <Badge size="lg" gap="6px" colorPalette={mapUserRoleColor(role)}>
       {mapUserRoleIcon(role)}
@@ -62,7 +62,7 @@ const UserInfoMenu = () => (
             Изменить
           </Menu.Item>
           <Menu.Item value="password" cursor="pointer">
-            Пароль
+            Сменить пароль
           </Menu.Item>
           <Menu.Item
             value="delete"
@@ -84,11 +84,17 @@ export function UsersTable({ usersInfos }) {
       <Table.Root size="lg" maxW="5xl">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader border="none">Id</Table.ColumnHeader>
-            <Table.ColumnHeader border="none">Имя</Table.ColumnHeader>
+            <Table.ColumnHeader border="none" w="20">
+              Id
+            </Table.ColumnHeader>
+            <Table.ColumnHeader border="none" w="60">
+              Имя
+            </Table.ColumnHeader>
             <Table.ColumnHeader border="none">Почта</Table.ColumnHeader>
-            <Table.ColumnHeader border="none">Роль</Table.ColumnHeader>
-            <Table.ColumnHeader border="none"></Table.ColumnHeader>
+            <Table.ColumnHeader border="none" w="48">
+              Роль
+            </Table.ColumnHeader>
+            <Table.ColumnHeader border="none" w="12"></Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -98,7 +104,7 @@ export function UsersTable({ usersInfos }) {
               <Table.Cell border="none">{userInfo.username}</Table.Cell>
               <Table.Cell border="none">{userInfo.email}</Table.Cell>
               <Table.Cell border="none">
-                {userRoleBadge(userInfo.role)}
+                <UserRoleBadge role={userInfo.role} />
               </Table.Cell>
               <Table.Cell border="none">
                 <UserInfoMenu />

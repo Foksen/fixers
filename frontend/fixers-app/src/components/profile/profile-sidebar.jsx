@@ -138,7 +138,7 @@ function createSidebarLink(profilePage, key) {
         <SidebarLink
           title="Виды ремонта"
           icon={<TbCategory2 />}
-          disabled
+          href={href}
           key={key}
         />
       );
@@ -148,7 +148,7 @@ function createSidebarLink(profilePage, key) {
         <SidebarLink
           title="Сервисные центры"
           icon={<TbBuildings />}
-          disabled
+          href={href}
           key={key}
         />
       );

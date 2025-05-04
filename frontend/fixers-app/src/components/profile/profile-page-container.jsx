@@ -1,11 +1,19 @@
 import { PROFILE_COMMON_PAGE, PROFILE_PAGE } from "@/constants/profile-pages";
 import { SettingsContainer } from "./settings/settings-container";
-import { getCategories, getServiceCenters, getTasks } from "@/lib/api/tasks";
+import {
+  getCategories,
+  getCategoriesInfos,
+  getServiceCenters,
+  getServiceCentersInfos,
+  getTasks,
+} from "@/lib/api/tasks";
 import { TasksContainer } from "./tasks/containers/tasks-container";
 import { ClientTasksContainer } from "./tasks/containers/client-tasks-container";
 import { WorkingTasksContainer } from "./tasks/containers/working-tasks-container";
 import { UsersContainer } from "./users/users-conainter";
 import { getUserInfos } from "@/lib/api/user";
+import { CategoriesContainer } from "./categories/categories-container";
+import { ServiceCentersContainer } from "./service-centers/service-centers-container";
 
 const fetchTasks = async (session) => {
   try {
@@ -56,6 +64,24 @@ const fetchUserInfos = async (session) => {
   }
 };
 
+const fetchCategoriesInfos = async (session) => {
+  try {
+    const result = await getCategoriesInfos(session.accessToken);
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching categories infos: ", error);
+  }
+};
+
+const fetchServiceCentersInfos = async (session) => {
+  try {
+    const result = await getServiceCentersInfos(session.accessToken);
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching service centers infos: ", error);
+  }
+};
+
 export async function ProfilePageContainer({ profilePage, session }) {
   switch (profilePage) {
     case PROFILE_PAGE.TASKS:
@@ -86,6 +112,20 @@ export async function ProfilePageContainer({ profilePage, session }) {
     case PROFILE_PAGE.USERS:
       return (
         <UsersContainer initialUserInfos={await fetchUserInfos(session)} />
+      );
+
+    case PROFILE_PAGE.CATEGORIES:
+      return (
+        <CategoriesContainer
+          initialCategoriesInfos={await fetchCategoriesInfos(session)}
+        />
+      );
+
+    case PROFILE_PAGE.SERVICE_CENTERS:
+      return (
+        <ServiceCentersContainer
+          initialServiceCentersInfos={await fetchServiceCentersInfos(session)}
+        />
       );
 
     case PROFILE_COMMON_PAGE.SETTINGS:

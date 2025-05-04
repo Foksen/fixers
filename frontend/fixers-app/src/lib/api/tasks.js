@@ -6,9 +6,23 @@ export async function getCategories() {
   });
 }
 
+export async function getCategoriesInfos(accessToken) {
+  return backendFetch("/api/tasks/categories-infos", {
+    method: "GET",
+    accessToken: accessToken,
+  });
+}
+
 export async function getServiceCenters() {
   return backendFetch("/api/tasks/service-centers/", {
     method: "GET",
+  });
+}
+
+export async function getServiceCentersInfos(accessToken) {
+  return backendFetch("/api/tasks/service-centers-infos/", {
+    method: "GET",
+    accessToken: accessToken,
   });
 }
 

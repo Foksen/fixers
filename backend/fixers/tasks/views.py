@@ -5,7 +5,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.models import Role
-from users.permissions import IsMasterOrModerator, IsModerator
+from users.permissions import IsModerator
 
 from .models import Task, TaskCategory, ServiceCenter
 from .serializers import TaskSerializer, TaskCategorySerializer, ServiceCenterSerializer, TaskCategoryInfoSerializer, \
@@ -13,31 +13,31 @@ from .serializers import TaskSerializer, TaskCategorySerializer, ServiceCenterSe
 
 
 class TaskCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = TaskCategory.objects.all()
     serializer_class = TaskCategorySerializer
     permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        return TaskCategory.objects.filter(published=True)
+    filterset_fields = ['published',]
 
 
 class TaskCategoryInfoViewSet(viewsets.ModelViewSet):
     queryset = TaskCategory.objects.annotate(tasks_count=Count('task'))
     serializer_class = TaskCategoryInfoSerializer
     permission_classes = [IsAuthenticated & IsModerator]
+    filterset_fields = ['published', ]
 
 
 class ServiceCenterViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ServiceCenter.objects.all()
     serializer_class = ServiceCenterSerializer
     permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        return ServiceCenter.objects.filter(published=True)
+    filterset_fields = ['published',]
 
 
 class ServiceCenterInfoViewSet(viewsets.ModelViewSet):
     queryset = ServiceCenter.objects.annotate(tasks_count=Count('task'))
     serializer_class = ServiceCenterInfoSerializer
     permission_classes = [IsAuthenticated & IsModerator]
+    filterset_fields = ['published', ]
 
 
 class TaskViewSet(viewsets.ModelViewSet):
