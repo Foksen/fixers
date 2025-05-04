@@ -30,7 +30,11 @@ export function TaskFilter({ filterControl, taskFilter }) {
             <Select.Positioner>
               <Select.Content>
                 {taskFilter.collection.items.map((filterItem) => (
-                  <Select.Item item={filterItem} key={filterItem.value}>
+                  <Select.Item
+                    item={filterItem}
+                    key={filterItem.value}
+                    cursor="pointer"
+                  >
                     {filterItem.label}
                     <Select.ItemIndicator />
                   </Select.Item>

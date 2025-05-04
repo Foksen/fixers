@@ -136,6 +136,7 @@ export function SignInForm({
             disabled={!isValid}
             loading={isLoginSubmitLoading || null}
             loadingText="Войти"
+            colorPalette="yellow"
           >
             Войти
           </Button>

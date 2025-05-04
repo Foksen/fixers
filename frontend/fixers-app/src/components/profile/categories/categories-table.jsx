@@ -23,14 +23,14 @@ const CategoryInfoMenu = ({ published, isFree }) => (
       <Menu.Positioner>
         <Menu.Content>
           <Menu.Item value="edit" cursor="pointer">
-            Изменить название
+            Изменить
           </Menu.Item>
           <Menu.Item value="password" cursor="pointer">
-            Сделать {published ? "недоступным" : "доступным"}
+            {published ? "Недоступен" : "Доступен"}
           </Menu.Item>
           <Menu.Item
             value="delete"
-            cursor="pointer"
+            cursor={isFree ? "pointer" : "default"}
             color="fg.error"
             _hover={{ bg: "bg.error", color: "fg.error" }}
             disabled={!isFree}

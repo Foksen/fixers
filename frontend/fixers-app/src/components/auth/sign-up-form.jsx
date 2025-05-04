@@ -80,7 +80,7 @@ export function SignUpForm({
           </Field.Root>
         </Fieldset.Content>
 
-        <Button mt="8" type="submit" disabled={!isValid}>
+        <Button mt="8" type="submit" disabled={!isValid} colorPalette="yellow">
           Зарегистрироваться
         </Button>
 

@@ -93,15 +93,15 @@ function createSidebarLink(profilePage, key) {
         <SidebarLink title="Уведомления" icon={<TbBell />} disabled key={key} />
       );
 
-    case PROFILE_PAGE.MASTERS:
-      return (
-        <SidebarLink
-          title="Мастеры"
-          icon={<TbUserSearch />}
-          disabled
-          key={key}
-        />
-      );
+    // case PROFILE_PAGE.MASTERS:
+    //   return (
+    //     <SidebarLink
+    //       title="Мастеры"
+    //       icon={<TbUserSearch />}
+    //       disabled
+    //       key={key}
+    //     />
+    //   );
 
     case PROFILE_PAGE.USERS:
       return (
