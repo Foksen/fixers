@@ -46,17 +46,39 @@ const ServiceCenterInfoMenu = ({ published, isFree }) => (
 export function ServiceCentersTable({ serviceCentersInfos }) {
   return (
     <Box mt="5">
-      <Table.Root size="lg" maxW="3xl">
+      <Table.Root size="lg" maxW="2xl">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader border="none" w="20">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              w="20"
+            >
               Id
             </Table.ColumnHeader>
-            <Table.ColumnHeader border="none">Название</Table.ColumnHeader>
-            <Table.ColumnHeader border="none" w="32">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+            >
+              Название
+            </Table.ColumnHeader>
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              textAlign="center"
+              w="32"
+            >
               Заявки
             </Table.ColumnHeader>
-            <Table.ColumnHeader border="none" w="36">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              w="36"
+            >
               Статус
             </Table.ColumnHeader>
             <Table.ColumnHeader border="none" w="12"></Table.ColumnHeader>
@@ -65,15 +87,42 @@ export function ServiceCentersTable({ serviceCentersInfos }) {
         <Table.Body>
           {serviceCentersInfos.map((serviceCenterInfo) => (
             <Table.Row key={serviceCenterInfo.id} h="16">
-              <Table.Cell border="none">{serviceCenterInfo.id}</Table.Cell>
-              <Table.Cell border="none">{serviceCenterInfo.name}</Table.Cell>
-              <Table.Cell border="none">
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
+                {serviceCenterInfo.id}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+                fontWeight="medium"
+              >
+                {serviceCenterInfo.name}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+                fontWeight="medium"
+                textAlign="center"
+              >
                 {serviceCenterInfo.tasks_count}
               </Table.Cell>
-              <Table.Cell border="none">
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
                 {ServiceInfoStatusBadge(serviceCenterInfo.published)}
               </Table.Cell>
-              <Table.Cell border="none">
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
                 <ServiceCenterInfoMenu
                   isFree={serviceCenterInfo.tasks_count == 0}
                   published={serviceCenterInfo.published}

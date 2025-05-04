@@ -62,7 +62,7 @@ const UserInfoMenu = () => (
             Изменить
           </Menu.Item>
           <Menu.Item value="password" cursor="pointer">
-            Сменить пароль
+            Пароль
           </Menu.Item>
           <Menu.Item
             value="delete"
@@ -84,14 +84,35 @@ export function UsersTable({ usersInfos }) {
       <Table.Root size="lg" maxW="5xl">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader border="none" w="20">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              w="20"
+            >
               Id
             </Table.ColumnHeader>
-            <Table.ColumnHeader border="none" w="60">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              w="60"
+            >
               Имя
             </Table.ColumnHeader>
-            <Table.ColumnHeader border="none">Почта</Table.ColumnHeader>
-            <Table.ColumnHeader border="none" w="48">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+            >
+              Почта
+            </Table.ColumnHeader>
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              w="48"
+            >
               Роль
             </Table.ColumnHeader>
             <Table.ColumnHeader border="none" w="12"></Table.ColumnHeader>
@@ -100,13 +121,41 @@ export function UsersTable({ usersInfos }) {
         <Table.Body>
           {usersInfos.map((userInfo) => (
             <Table.Row key={userInfo.id} h="16">
-              <Table.Cell border="none">{userInfo.id}</Table.Cell>
-              <Table.Cell border="none">{userInfo.username}</Table.Cell>
-              <Table.Cell border="none">{userInfo.email}</Table.Cell>
-              <Table.Cell border="none">
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
+                {userInfo.id}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+                fontWeight="medium"
+              >
+                {userInfo.username}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+                fontWeight="medium"
+              >
+                {userInfo.email}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
                 <UserRoleBadge role={userInfo.role} />
               </Table.Cell>
-              <Table.Cell border="none">
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
                 <UserInfoMenu />
               </Table.Cell>
             </Table.Row>

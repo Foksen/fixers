@@ -46,17 +46,39 @@ const CategoryInfoMenu = ({ published, isFree }) => (
 export function CategoriesTable({ categoriesInfos }) {
   return (
     <Box mt="5">
-      <Table.Root size="lg" maxW="3xl">
+      <Table.Root size="lg" maxW="2xl">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader border="none" w="20">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              w="20"
+            >
               Id
             </Table.ColumnHeader>
-            <Table.ColumnHeader border="none">Название</Table.ColumnHeader>
-            <Table.ColumnHeader border="none" w="32">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+            >
+              Название
+            </Table.ColumnHeader>
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              textAlign="center"
+              w="32"
+            >
               Заявки
             </Table.ColumnHeader>
-            <Table.ColumnHeader border="none" w="36">
+            <Table.ColumnHeader
+              fontWeight="normal"
+              color="fg.subtle"
+              border="none"
+              w="36"
+            >
               Статус
             </Table.ColumnHeader>
             <Table.ColumnHeader border="none" w="12"></Table.ColumnHeader>
@@ -65,13 +87,42 @@ export function CategoriesTable({ categoriesInfos }) {
         <Table.Body>
           {categoriesInfos.map((categoryInfo) => (
             <Table.Row key={categoryInfo.id} h="16">
-              <Table.Cell border="none">{categoryInfo.id}</Table.Cell>
-              <Table.Cell border="none">{categoryInfo.name}</Table.Cell>
-              <Table.Cell border="none">{categoryInfo.tasks_count}</Table.Cell>
-              <Table.Cell border="none">
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
+                {categoryInfo.id}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+                fontWeight="medium"
+              >
+                {categoryInfo.name}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+                fontWeight="medium"
+                textAlign="center"
+              >
+                {categoryInfo.tasks_count}
+              </Table.Cell>
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
                 {CategoryInfoStatusBadge(categoryInfo.published)}
               </Table.Cell>
-              <Table.Cell border="none">
+              <Table.Cell
+                borderTopWidth="1px"
+                borderBottomWidth="0"
+                borderColor="border.muted"
+              >
                 <CategoryInfoMenu
                   isFree={categoryInfo.tasks_count == 0}
                   published={categoryInfo.published}

@@ -25,11 +25,13 @@ function mapTaskStatusColor(status) {
   switch (status) {
     case TASK_STATUS.NEW:
       return null;
-    case (TASK_STATUS.RECEIVED, TASK_STATUS.PROCESSING):
+    case TASK_STATUS.RECEIVED:
+    case TASK_STATUS.PROCESSING:
       return "yellow";
     case TASK_STATUS.COMPLETED:
       return "green";
-    case (TASK_STATUS.CANCELED, TASK_STATUS.REJECTED):
+    case TASK_STATUS.CANCELED:
+    case TASK_STATUS.REJECTED:
       return "red";
     default:
       return "pink";
