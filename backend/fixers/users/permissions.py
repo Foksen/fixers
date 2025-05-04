@@ -11,3 +11,12 @@ class IsMasterOrModerator(permissions.BasePermission):
             and request.user.is_authenticated
             and getattr(request.user, "role", None) in [Role.MASTER, Role.MODERATOR]
         )
+
+
+class IsModerator(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and getattr(request.user, "role", None) in [Role.MODERATOR]
+        )

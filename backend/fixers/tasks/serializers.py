@@ -5,13 +5,29 @@ from .models import Task, TaskCategory, ServiceCenter
 class TaskCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskCategory
-        fields = '__all__'
+        fields = ['id', 'name']
+
+
+class TaskCategoryInfoSerializer(serializers.ModelSerializer):
+    tasks_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = TaskCategory
+        fields = ['id', 'name', 'published', 'tasks_count']
 
 
 class ServiceCenterSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceCenter
-        fields = '__all__'
+        fields = ['id', 'name']
+
+
+class ServiceCenterInfoSerializer(serializers.ModelSerializer):
+    tasks_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = ServiceCenter
+        fields = ['id', 'name', 'published', 'tasks_count']
 
 
 class TaskSerializer(serializers.ModelSerializer):

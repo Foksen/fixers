@@ -1,24 +1,43 @@
+from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.models import Role
+from users.permissions import IsMasterOrModerator, IsModerator
 
 from .models import Task, TaskCategory, ServiceCenter
-from .serializers import TaskSerializer, TaskCategorySerializer, ServiceCenterSerializer
+from .serializers import TaskSerializer, TaskCategorySerializer, ServiceCenterSerializer, TaskCategoryInfoSerializer, \
+    ServiceCenterInfoSerializer
 
 
-class TaskCategoryViewSet(viewsets.ModelViewSet):
-    queryset = TaskCategory.objects.all()
+class TaskCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TaskCategorySerializer
     permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        return TaskCategory.objects.filter(published=True)
 
-class ServiceCenterViewSet(viewsets.ModelViewSet):
-    queryset = ServiceCenter.objects.all()
+
+class TaskCategoryInfoViewSet(viewsets.ModelViewSet):
+    queryset = TaskCategory.objects.annotate(tasks_count=Count('task'))
+    serializer_class = TaskCategoryInfoSerializer
+    permission_classes = [IsAuthenticated & IsModerator]
+
+
+class ServiceCenterViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ServiceCenterSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return ServiceCenter.objects.filter(published=True)
+
+
+class ServiceCenterInfoViewSet(viewsets.ModelViewSet):
+    queryset = ServiceCenter.objects.annotate(tasks_count=Count('task'))
+    serializer_class = ServiceCenterInfoSerializer
+    permission_classes = [IsAuthenticated & IsModerator]
 
 
 class TaskViewSet(viewsets.ModelViewSet):

@@ -12,6 +12,7 @@ class TaskStatus(models.TextChoices):
 
 class TaskCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    published = models.BooleanField(max_length=255, default=True)
 
     def __str__(self):
         return self.name
@@ -19,6 +20,7 @@ class TaskCategory(models.Model):
 
 class ServiceCenter(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    published = models.BooleanField(max_length=255, default=True)
 
     def __str__(self):
         return self.name

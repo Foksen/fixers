@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import Task, TaskCategory, ServiceCenter
 
+
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     model = Task
@@ -9,6 +10,16 @@ class TaskAdmin(admin.ModelAdmin):
     ordering = ('id',)
     readonly_fields = ('id', 'created_at', 'modified_at')
 
-admin.site.register(TaskCategory)
 
-admin.site.register(ServiceCenter)
+@admin.register(TaskCategory)
+class TaskCategoryAdmin(admin.ModelAdmin):
+    model = TaskCategory
+    list_display = ('id', 'name', 'published')
+    ordering = ('id',)
+
+
+@admin.register(ServiceCenter)
+class ServiceCenterAdmin(admin.ModelAdmin):
+    model = ServiceCenter
+    list_display = ('id', 'name', 'published')
+    ordering = ('id',)
