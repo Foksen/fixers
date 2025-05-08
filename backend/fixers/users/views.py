@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User, Role, TrustedIp, EmailAuthCode
-from .permissions import IsMasterOrModerator
+from .permissions import IsMasterOrModerator, IsOwnerOrModerator
 from .serializers import RegisterSerializer, UserSerializer, LoginSerializer, UserInfoSerializer
 from .tokens import CustomTokenObtainPairSerializer
 from .utils import get_client_ip, generate_code
@@ -99,11 +99,21 @@ class RegisterView(generics.CreateAPIView):
         serializer.save()
 
 
-class UserMeView(generics.RetrieveAPIView):
+class UserView(viewsets.ModelViewSet):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrModerator]
+    http_method_names = ['get', 'patch', 'put']
 
     def get_object(self):
-        return self.request.user
+        if self.request.user.role != Role.MODERATOR:
+            return self.request.user
+        return super().get_object()
+
+    def list(self, request, *args, **kwargs):
+        if request.user.role != Role.MODERATOR:
+            return Response({'detail': 'Not enough rights'}, status=403)
+        return super().list(request, *args, **kwargs)
 
 
 class UserInfosViewSet(viewsets.ModelViewSet):

@@ -1,9 +1,12 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { ProfilePageView } from "../profile-page-view";
+import { SettingsContent } from "./settings-content";
 
-export function SettingsContainer() {
+export function SettingsContainer({ session }) {
   return (
-    <Box px="16" py="12">
-      <Heading textStyle="2xl">Настройки</Heading>
-    </Box>
+    <ProfilePageView
+      title="Настройки"
+      description="На этой странице вы можете изменить настройки своего аккаунта"
+      content={<SettingsContent session={session}/>}
+    />
   );
 }

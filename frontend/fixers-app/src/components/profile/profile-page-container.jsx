@@ -14,6 +14,7 @@ import { UsersContainer } from "./users/users-conainter";
 import { getUserInfos } from "@/lib/api/user";
 import { CategoriesContainer } from "./categories/categories-container";
 import { ServiceCentersContainer } from "./service-centers/service-centers-container";
+import { NotificationsContainer } from "./notifications/notifications-container";
 
 const fetchTasks = async (session) => {
   try {
@@ -82,6 +83,42 @@ const fetchServiceCentersInfos = async (session) => {
   }
 };
 
+const notifications = [
+  {
+    id: 1,
+    task_id: 1,
+    user_id: 1,
+    sender_id: 1,
+    title: "Статус заявки изменён",
+    message:
+      'Мастер Иван изменил статус вашей заявки (Сломался экран телефона) на "В работе"',
+    is_new: false,
+    created_at: "05.05.2025 14:30",
+  },
+  {
+    id: 1,
+    task_id: 1,
+    user_id: 1,
+    sender_id: 1,
+    title: "Статус заявки изменён",
+    message:
+      'Мастер Иван изменил статус вашей заявки (Сломался экран телефона) на "В работе"',
+    is_new: false,
+    created_at: "01.01.1970 00:00",
+  },
+  {
+    id: 1,
+    task_id: 1,
+    user_id: 1,
+    sender_id: 1,
+    title: "Статус заявки изменён",
+    message:
+      'Мастер Иван изменил статус вашей заявки (Сломался экран телефона) на "В работе"',
+    is_new: false,
+    created_at: "06.05.2025 14:20",
+  },
+];
+
 export async function ProfilePageContainer({ profilePage, session }) {
   switch (profilePage) {
     case PROFILE_PAGE.TASKS:
@@ -135,7 +172,10 @@ export async function ProfilePageContainer({ profilePage, session }) {
       );
 
     case PROFILE_COMMON_PAGE.SETTINGS:
-      return <SettingsContainer />;
+      return <SettingsContainer session={session} />;
+
+    case PROFILE_COMMON_PAGE.NOTIFICATIONS:
+      return <NotificationsContainer initialNotifications={notifications} />;
 
     default:
       return null;

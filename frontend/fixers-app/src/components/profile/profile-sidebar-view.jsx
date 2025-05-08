@@ -44,12 +44,14 @@ function mapNotificationsLinkLabel(newNotificationsCount) {
       <Text>Уведомления</Text>
       <Center
         position="absolute"
-        w="7"
-        h="7"
+        w="6"
+        h="6"
         right="0"
         align="center"
         bg="yellow.solid"
         rounded="full"
+        textStyle="xs"
+        fontWeight="semibold"
       >
         {newNotificationsCount}
       </Center>
@@ -75,10 +77,16 @@ const SidebarLink = ({ title, icon, href, ...props }) => (
   </Button>
 );
 
-const SidebarProfile = ({ username, useravatar, role, ...props }) => (
+export const SidebarProfile = ({
+  size,
+  username,
+  useravatar,
+  role,
+  ...props
+}) => (
   <HStack gap="3" {...props}>
     {username ? (
-      <AvatarGroup size="sm">
+      <AvatarGroup size={size}>
         <Avatar.Root
           colorPalette={
             RAINBOW_AVATAR_COLORS ? pickPalette(username) : "yellow"
@@ -188,7 +196,7 @@ export function ProfileSidebarView({
       bg="bg.subtle"
     >
       <SidebarProfile
-        name=""
+        size="sm"
         py="4"
         px="3"
         username={username}

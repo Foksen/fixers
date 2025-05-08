@@ -44,6 +44,7 @@ const TaskInfo = ({ title, isLast, isValue }) => (
     borderBottomWidth={isLast ? "0" : null}
     textAlign={isValue ? "end" : "start"}
     fontWeight={isValue ? "medium" : null}
+    borderColor="border.muted"
   >
     {title}
   </Table.Cell>
@@ -53,20 +54,25 @@ export function TaskGridItem({ task }) {
   const created_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
   const modified_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
   return (
-    <VStack px="6" py="4" borderWidth="1px" align="start" rounded="sm">
-      <Text fontWeight="medium" textStyle="lg">
-        {`Заявка №${task.id}`}
+    <VStack px="7" py="6" borderWidth="1px" align="start" rounded="sm">
+      <Text fontWeight="medium" textStyle="2xl">
+        {`${task.description}`}
       </Text>
-      <Table.Root>
+      <Table.Root mt="1" size="sm">
         <Table.Body>
           <Table.Row>
-            <TaskInfo title="Описание" />
-            <TaskInfo isValue title={task.description} />
+            <TaskInfo title="Номер заявки" />
+            <TaskInfo isValue title={task.id} />
           </Table.Row>
 
           <Table.Row>
             <TaskInfo title="Вид ремонта" />
             <TaskInfo isValue title={task.category_name} />
+          </Table.Row>
+
+          <Table.Row>
+            <TaskInfo title="Сервисный центр" />
+            <TaskInfo isValue title={task.service_center_name} />
           </Table.Row>
 
           <Table.Row>

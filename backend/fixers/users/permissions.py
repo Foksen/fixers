@@ -20,3 +20,8 @@ class IsModerator(permissions.BasePermission):
             and request.user.is_authenticated
             and getattr(request.user, "role", None) in [Role.MODERATOR]
         )
+
+
+class IsOwnerOrModerator(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj or request.user.role == Role.MODERATOR
