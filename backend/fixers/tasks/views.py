@@ -5,17 +5,17 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.models import Role
-from users.permissions import IsModerator
+from users.permissions import IsModerator, IsSafeOrIsModerator
 
 from .models import Task, TaskCategory, ServiceCenter
 from .serializers import TaskSerializer, TaskCategorySerializer, ServiceCenterSerializer, TaskCategoryInfoSerializer, \
     ServiceCenterInfoSerializer
 
 
-class TaskCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+class TaskCategoryViewSet(viewsets.ModelViewSet):
     queryset = TaskCategory.objects.all()
     serializer_class = TaskCategorySerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsSafeOrIsModerator]
     filterset_fields = ['published',]
 
 
@@ -26,10 +26,10 @@ class TaskCategoryInfoViewSet(viewsets.ModelViewSet):
     filterset_fields = ['published', ]
 
 
-class ServiceCenterViewSet(viewsets.ReadOnlyModelViewSet):
+class ServiceCenterViewSet(viewsets.ModelViewSet):
     queryset = ServiceCenter.objects.all()
     serializer_class = ServiceCenterSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsSafeOrIsModerator]
     filterset_fields = ['published',]
 
 

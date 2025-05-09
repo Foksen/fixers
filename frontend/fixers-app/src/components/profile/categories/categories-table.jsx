@@ -1,7 +1,9 @@
 import { Badge, Box, IconButton, Menu, Portal, Table } from "@chakra-ui/react";
 import { TbDots } from "react-icons/tb";
+import { useState } from "react";
+import { CategoriesDialogEdit } from "./dialogs/categories-dialog-edit";
 
-function CategoryInfoStatusBadge(published) {
+const CategoryInfoStatusBadge = (published) => {
   const label = published ? "Доступен" : "Недоступен";
   const colorPalette = published ? "green" : "red";
 
@@ -10,9 +12,14 @@ function CategoryInfoStatusBadge(published) {
       {label}
     </Badge>
   );
-}
+};
 
-const CategoryInfoMenu = ({ published, isFree }) => (
+const CategoryInfoMenu = ({
+  categoryInfo,
+  isFree,
+  setEditDialogOpen,
+  setSelectedCategory,
+}) => (
   <Menu.Root>
     <Menu.Trigger asChild>
       <IconButton variant="ghost" size="sm">
@@ -22,11 +29,15 @@ const CategoryInfoMenu = ({ published, isFree }) => (
     <Portal>
       <Menu.Positioner>
         <Menu.Content>
-          <Menu.Item value="edit" cursor="pointer">
+          <Menu.Item
+            value="edit"
+            cursor="pointer"
+            onClick={() => {
+              setSelectedCategory(categoryInfo);
+              setEditDialogOpen(true);
+            }}
+          >
             Изменить
-          </Menu.Item>
-          <Menu.Item value="password" cursor="pointer">
-            {published ? "Недоступен" : "Доступен"}
           </Menu.Item>
           <Menu.Item
             value="delete"
@@ -43,10 +54,22 @@ const CategoryInfoMenu = ({ published, isFree }) => (
   </Menu.Root>
 );
 
-export function CategoriesTable({ categoriesInfos }) {
+export function CategoriesTable({ initialCategoriesInfos, session }) {
+  const [categoriesInfos, setCategoriesInfos] = useState(
+    initialCategoriesInfos
+  );
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const updateCategoryInfo = (id, newCategoryInfo) => {
+    setCategoriesInfos((prev) =>
+      prev.map((cat) => (cat.id === id ? { ...cat, ...newCategoryInfo } : cat))
+    );
+  };
+
   return (
     <Box mt="5">
-      <Table.Root size="lg" maxW="2xl">
+      <Table.Root size="lg" maxW="3xl">
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader
@@ -125,13 +148,23 @@ export function CategoriesTable({ categoriesInfos }) {
               >
                 <CategoryInfoMenu
                   isFree={categoryInfo.tasks_count == 0}
-                  published={categoryInfo.published}
+                  categoryInfo={categoryInfo}
+                  setEditDialogOpen={setEditDialogOpen}
+                  setSelectedCategory={setSelectedCategory}
                 />
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>
+
+      <CategoriesDialogEdit
+        isEditDialogOpen={isEditDialogOpen}
+        setEditDialogOpen={setEditDialogOpen}
+        categoryInfo={selectedCategory}
+        updateCategoryInfo={updateCategoryInfo}
+        session={session}
+      />
     </Box>
   );
 }

@@ -1,5 +1,6 @@
 
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
 
 from users.models import Role
 
@@ -18,7 +19,18 @@ class IsModerator(permissions.BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and getattr(request.user, "role", None) in [Role.MODERATOR]
+            and getattr(request.user, "role", None) == Role.MODERATOR
+        )
+
+
+class IsSafeOrIsModerator(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        return (
+            request.user
+            and request.user.is_authenticated
+            and getattr(request.user, 'role', None) == Role.MODERATOR
         )
 
 

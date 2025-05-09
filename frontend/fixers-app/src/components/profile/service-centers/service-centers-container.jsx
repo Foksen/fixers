@@ -3,7 +3,10 @@
 import { ProfilePageView } from "../profile-page-view";
 import { ServiceCentersContent } from "./service-centers-content";
 
-export function ServiceCentersContainer({ initialServiceCentersInfos }) {
+export function ServiceCentersContainer({
+  initialServiceCentersInfos,
+  session,
+}) {
   return (
     <ProfilePageView
       title="Сервисные центры"
@@ -11,6 +14,7 @@ export function ServiceCentersContainer({ initialServiceCentersInfos }) {
       content={
         <ServiceCentersContent
           initialServiceCentersInfos={initialServiceCentersInfos}
+          session={session}
         />
       }
     />

@@ -1,7 +1,7 @@
 import { Alert, Box } from "@chakra-ui/react";
 import { ServiceCentersTable } from "./service-centers-table";
 
-export function ServiceCentersContent({ initialServiceCentersInfos }) {
+export function ServiceCentersContent({ initialServiceCentersInfos, session }) {
   return (
     <Box>
       <Alert.Root mt="5" status="info" width="fit">
@@ -12,7 +12,10 @@ export function ServiceCentersContent({ initialServiceCentersInfos }) {
         </Alert.Title>
       </Alert.Root>
 
-      <ServiceCentersTable serviceCentersInfos={initialServiceCentersInfos} />
+      <ServiceCentersTable
+        initialServiceCentersInfos={initialServiceCentersInfos}
+        session={session}
+      />
     </Box>
   );
 }

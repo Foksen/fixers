@@ -1,5 +1,7 @@
 import { Badge, Box, IconButton, Menu, Portal, Table } from "@chakra-ui/react";
 import { TbDots } from "react-icons/tb";
+import { useState } from "react";
+import { ServiceCentersDialogEdit } from "./dialogs/service-centers-dialog-edit";
 
 function ServiceInfoStatusBadge(published) {
   const label = published ? "Доступен" : "Недоступен";
@@ -12,7 +14,12 @@ function ServiceInfoStatusBadge(published) {
   );
 }
 
-const ServiceCenterInfoMenu = ({ published, isFree }) => (
+const ServiceCenterInfoMenu = ({
+  serviceCenter,
+  isFree,
+  setEditDialogOpen,
+  setSelectedServiceCenter,
+}) => (
   <Menu.Root>
     <Menu.Trigger asChild>
       <IconButton variant="ghost" size="sm">
@@ -22,11 +29,15 @@ const ServiceCenterInfoMenu = ({ published, isFree }) => (
     <Portal>
       <Menu.Positioner>
         <Menu.Content>
-          <Menu.Item value="edit" cursor="pointer">
+          <Menu.Item
+            value="edit"
+            cursor="pointer"
+            onClick={() => {
+              setSelectedServiceCenter(serviceCenter);
+              setEditDialogOpen(true);
+            }}
+          >
             Изменить
-          </Menu.Item>
-          <Menu.Item value="password" cursor="pointer">
-            {published ? "Доступен" : "Недоступен"}
           </Menu.Item>
           <Menu.Item
             value="delete"
@@ -43,10 +54,24 @@ const ServiceCenterInfoMenu = ({ published, isFree }) => (
   </Menu.Root>
 );
 
-export function ServiceCentersTable({ serviceCentersInfos }) {
+export function ServiceCentersTable({ initialServiceCentersInfos, session }) {
+  const [serviceCentersInfos, setServiceCentersInfos] = useState(
+    initialServiceCentersInfos
+  );
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedServiceCenter, setSelectedServiceCenter] = useState(null);
+
+  const updateServiceCenterInfo = (id, newServiceCenterInfo) => {
+    setServiceCentersInfos((prev) =>
+      prev.map((cat) =>
+        cat.id === id ? { ...cat, ...newServiceCenterInfo } : cat
+      )
+    );
+  };
+
   return (
     <Box mt="5">
-      <Table.Root size="lg" maxW="2xl">
+      <Table.Root size="lg" maxW="3xl">
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader
@@ -125,13 +150,23 @@ export function ServiceCentersTable({ serviceCentersInfos }) {
               >
                 <ServiceCenterInfoMenu
                   isFree={serviceCenterInfo.tasks_count == 0}
-                  published={serviceCenterInfo.published}
+                  serviceCenter={serviceCenterInfo}
+                  setEditDialogOpen={setEditDialogOpen}
+                  setSelectedServiceCenter={setSelectedServiceCenter}
                 />
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>
+
+      <ServiceCentersDialogEdit
+        isEditDialogOpen={isEditDialogOpen}
+        setEditDialogOpen={setEditDialogOpen}
+        serviceCenterInfo={selectedServiceCenter}
+        updateServiceCenterInfo={updateServiceCenterInfo}
+        session={session}
+      />
     </Box>
   );
 }

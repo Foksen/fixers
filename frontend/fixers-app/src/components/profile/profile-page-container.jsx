@@ -160,6 +160,7 @@ export async function ProfilePageContainer({ profilePage, session }) {
     case PROFILE_PAGE.CATEGORIES:
       return (
         <CategoriesContainer
+          session={session}
           initialCategoriesInfos={await fetchCategoriesInfos(session)}
         />
       );
@@ -167,6 +168,7 @@ export async function ProfilePageContainer({ profilePage, session }) {
     case PROFILE_PAGE.SERVICE_CENTERS:
       return (
         <ServiceCentersContainer
+          session={session}
           initialServiceCentersInfos={await fetchServiceCentersInfos(session)}
         />
       );

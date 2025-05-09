@@ -1,7 +1,7 @@
 import { Alert, Box } from "@chakra-ui/react";
 import { CategoriesTable } from "./categories-table";
 
-export function CategoriesContent({ initialCategoriesInfos }) {
+export function CategoriesContent({ initialCategoriesInfos, session }) {
   return (
     <Box>
       <Alert.Root mt="5" status="info" width="fit">
@@ -11,7 +11,7 @@ export function CategoriesContent({ initialCategoriesInfos }) {
         </Alert.Title>
       </Alert.Root>
 
-      <CategoriesTable categoriesInfos={initialCategoriesInfos} />
+      <CategoriesTable initialCategoriesInfos={initialCategoriesInfos} session={session} />
     </Box>
   );
 }

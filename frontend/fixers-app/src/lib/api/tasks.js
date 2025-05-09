@@ -14,6 +14,14 @@ export async function getCategoriesInfos(accessToken) {
   });
 }
 
+export async function putCategory(accessToken, categoryId, categoryData) {
+  return backendFetch(`/api/tasks/categories/${categoryId}/`, {
+    method: "PUT",
+    accessToken: accessToken,
+    data: categoryData,
+  });
+}
+
 export async function getServiceCenters(filters) {
   return backendFetch("/api/tasks/service-centers/", {
     method: "GET",
@@ -25,6 +33,18 @@ export async function getServiceCentersInfos(accessToken) {
   return backendFetch("/api/tasks/service-centers-infos/", {
     method: "GET",
     accessToken: accessToken,
+  });
+}
+
+export async function putServiceCenter(
+  accessToken,
+  serviceCenterId,
+  serviceCenterData
+) {
+  return backendFetch(`/api/tasks/service-centers/${serviceCenterId}/`, {
+    method: "PUT",
+    accessToken: accessToken,
+    data: serviceCenterData,
   });
 }
 
