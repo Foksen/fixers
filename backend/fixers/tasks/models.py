@@ -29,8 +29,8 @@ class ServiceCenter(models.Model):
 class Task(models.Model):
     client = models.ForeignKey('users.User', related_name='client_tasks', on_delete=models.CASCADE)
     master = models.ForeignKey('users.User', related_name='master_tasks', on_delete=models.SET_NULL, null=True, blank=True)
-    category = models.ForeignKey(TaskCategory, on_delete=models.CASCADE)
-    service_center = models.ForeignKey(ServiceCenter, on_delete=models.CASCADE)
+    category = models.ForeignKey(TaskCategory, on_delete=models.RESTRICT)
+    service_center = models.ForeignKey(ServiceCenter, on_delete=models.RESTRICT)
     status = models.CharField(
         max_length=20,
         choices=TaskStatus.choices,

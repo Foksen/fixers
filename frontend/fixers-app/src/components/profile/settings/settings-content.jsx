@@ -24,8 +24,7 @@ export function SettingsContent({ session }) {
       <Alert.Root mt="5" status="warning" width="fit">
         <Alert.Indicator />
         <Alert.Title>
-          После внесения изменений для корректной работы необходимо выйти из
-          аккаунта и войти вновь
+          После внесения изменений для корректной работы необходимо перезайти
         </Alert.Title>
       </Alert.Root>
 

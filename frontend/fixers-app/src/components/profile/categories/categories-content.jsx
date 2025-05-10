@@ -20,9 +20,13 @@ export function CategoriesContent({ initialCategoriesInfos, session }) {
     );
   };
 
+  const removeCategoryInfo = (id) => {
+    setCategoriesInfos((prev) => prev.filter((cat) => cat.id !== id));
+  };
+
   return (
     <Box>
-      <Flex justify="space-between" align="end">
+      <Flex justify="space-between" flexWrap="wrap" gapY="4" align="end">
         <Alert.Root mt="5" status="info" width="fit">
           <Alert.Indicator />
           <Alert.Title>
@@ -41,6 +45,7 @@ export function CategoriesContent({ initialCategoriesInfos, session }) {
         session={session}
         categoriesInfos={categoriesInfos}
         updateCategoryInfo={updateCategoryInfo}
+        removeCategoryInfo={removeCategoryInfo}
       />
     </Box>
   );

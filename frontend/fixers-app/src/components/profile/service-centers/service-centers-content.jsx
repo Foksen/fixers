@@ -22,9 +22,13 @@ export function ServiceCentersContent({ initialServiceCentersInfos, session }) {
     );
   };
 
+  const removeServiceCenterInfo = (id) => {
+    setServiceCentersInfos((prev) => prev.filter((cat) => cat.id !== id));
+  };
+
   return (
     <Box>
-      <Flex justify="space-between" align="end">
+      <Flex justify="space-between" flexWrap="wrap" gapY="4" align="end">
         <Alert.Root mt="5" status="info" width="fit">
           <Alert.Indicator />
           <Alert.Title>
@@ -43,6 +47,7 @@ export function ServiceCentersContent({ initialServiceCentersInfos, session }) {
         session={session}
         serviceCentersInfos={serviceCentersInfos}
         updateServiceCenterInfo={updateServiceCenterInfo}
+        removeServiceCenterInfo={removeServiceCenterInfo}
       />
     </Box>
   );

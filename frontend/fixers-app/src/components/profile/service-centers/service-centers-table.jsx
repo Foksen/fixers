@@ -2,6 +2,7 @@ import { Badge, Box, IconButton, Menu, Portal, Table } from "@chakra-ui/react";
 import { TbDots } from "react-icons/tb";
 import { useState } from "react";
 import { ServiceCentersDialogEdit } from "./dialogs/service-centers-dialog-edit";
+import { ServiceCentersDialogDelete } from "./dialogs/service-centers-dialog-delete";
 
 function ServiceInfoStatusBadge(published) {
   const label = published ? "Доступен" : "Недоступен";
@@ -15,9 +16,10 @@ function ServiceInfoStatusBadge(published) {
 }
 
 const ServiceCenterInfoMenu = ({
-  serviceCenter,
+  serviceCenterInfo,
   isFree,
   setEditDialogOpen,
+  setDeleteDialogOpen,
   setSelectedServiceCenter,
 }) => (
   <Menu.Root>
@@ -33,7 +35,7 @@ const ServiceCenterInfoMenu = ({
             value="edit"
             cursor="pointer"
             onClick={() => {
-              setSelectedServiceCenter(serviceCenter);
+              setSelectedServiceCenter(serviceCenterInfo);
               setEditDialogOpen(true);
             }}
           >
@@ -45,6 +47,10 @@ const ServiceCenterInfoMenu = ({
             color="fg.error"
             _hover={{ bg: "bg.error", color: "fg.error" }}
             disabled={!isFree}
+            onClick={() => {
+              setSelectedServiceCenter(serviceCenterInfo);
+              setDeleteDialogOpen(true);
+            }}
           >
             Удалить
           </Menu.Item>
@@ -58,8 +64,10 @@ export function ServiceCentersTable({
   session,
   serviceCentersInfos,
   updateServiceCenterInfo,
+  removeServiceCenterInfo,
 }) {
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedServiceCenter, setSelectedServiceCenter] = useState(null);
 
   return (
@@ -143,8 +151,9 @@ export function ServiceCentersTable({
               >
                 <ServiceCenterInfoMenu
                   isFree={serviceCenterInfo.tasks_count == 0}
-                  serviceCenter={serviceCenterInfo}
+                  serviceCenterInfo={serviceCenterInfo}
                   setEditDialogOpen={setEditDialogOpen}
+                  setDeleteDialogOpen={setDeleteDialogOpen}
                   setSelectedServiceCenter={setSelectedServiceCenter}
                 />
               </Table.Cell>
@@ -158,6 +167,14 @@ export function ServiceCentersTable({
         setEditDialogOpen={setEditDialogOpen}
         serviceCenterInfo={selectedServiceCenter}
         updateServiceCenterInfo={updateServiceCenterInfo}
+        session={session}
+      />
+
+      <ServiceCentersDialogDelete
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+        serviceCenterInfo={selectedServiceCenter}
+        removeServiceCenterInfo={removeServiceCenterInfo}
         session={session}
       />
     </Box>

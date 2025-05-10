@@ -113,6 +113,7 @@ export function ServiceCentersDialogEdit({
                             field.onChange(checked)
                           }
                           gap="4"
+                          colorPalette="yellow"
                         >
                           <Switch.HiddenInput onBlur={field.onBlur} />
                           <Switch.Control />

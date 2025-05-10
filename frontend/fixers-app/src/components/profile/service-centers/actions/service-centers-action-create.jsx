@@ -23,7 +23,7 @@ export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
     reset,
     control,
     setError,
-    formState: { errors },
+    formState: { isValid, errors },
   } = useForm({ mode: "onSubmit", defaultValues: { published: true } });
 
   const onSubmit = handleSubmit(async (data) => {
@@ -99,6 +99,7 @@ export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
                             field.onChange(checked)
                           }
                           gap="4"
+                          colorPalette="yellow"
                         >
                           <Switch.HiddenInput onBlur={field.onBlur} />
                           <Switch.Control />
@@ -116,7 +117,7 @@ export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow">
+              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
                 Создать сервисный центр
               </Button>
             </Dialog.Footer>

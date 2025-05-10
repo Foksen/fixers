@@ -24,8 +24,6 @@ export async function backendFetch(
     });
   }
 
-  console.log(fullUrl.toString());
-
   const response = await fetch(fullUrl.toString(), {
     method,
     headers,

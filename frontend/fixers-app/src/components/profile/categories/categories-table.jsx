@@ -2,6 +2,7 @@ import { Badge, Box, IconButton, Menu, Portal, Table } from "@chakra-ui/react";
 import { TbDots } from "react-icons/tb";
 import { useState } from "react";
 import { CategoriesDialogEdit } from "./dialogs/categories-dialog-edit";
+import { CategoriesDialogDelete } from "./dialogs/categories-dialog-delete";
 
 const CategoryInfoStatusBadge = (published) => {
   const label = published ? "Доступен" : "Недоступен";
@@ -18,6 +19,7 @@ const CategoryInfoMenu = ({
   categoryInfo,
   isFree,
   setEditDialogOpen,
+  setDeleteDialogOpen,
   setSelectedCategory,
 }) => (
   <Menu.Root>
@@ -45,6 +47,10 @@ const CategoryInfoMenu = ({
             color="fg.error"
             _hover={{ bg: "bg.error", color: "fg.error" }}
             disabled={!isFree}
+            onClick={() => {
+              setSelectedCategory(categoryInfo);
+              setDeleteDialogOpen(true);
+            }}
           >
             Удалить
           </Menu.Item>
@@ -58,8 +64,10 @@ export function CategoriesTable({
   session,
   categoriesInfos,
   updateCategoryInfo,
+  removeCategoryInfo,
 }) {
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   return (
@@ -145,6 +153,7 @@ export function CategoriesTable({
                   isFree={categoryInfo.tasks_count == 0}
                   categoryInfo={categoryInfo}
                   setEditDialogOpen={setEditDialogOpen}
+                  setDeleteDialogOpen={setDeleteDialogOpen}
                   setSelectedCategory={setSelectedCategory}
                 />
               </Table.Cell>
@@ -158,6 +167,14 @@ export function CategoriesTable({
         setEditDialogOpen={setEditDialogOpen}
         categoryInfo={selectedCategory}
         updateCategoryInfo={updateCategoryInfo}
+        session={session}
+      />
+
+      <CategoriesDialogDelete
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+        categoryInfo={selectedCategory}
+        removeCategoryInfo={removeCategoryInfo}
         session={session}
       />
     </Box>
