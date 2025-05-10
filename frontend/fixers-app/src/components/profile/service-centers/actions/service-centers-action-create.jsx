@@ -8,56 +8,37 @@ import {
   Switch,
 } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
-import { putServiceCenter } from "@/lib/api/tasks";
-import { useEffect, useRef } from "react";
+import { useState, useRef } from "react";
+import { createServiceCenter } from "@/lib/api/tasks";
 import { mapServiceCenterNameError } from "@/util/map-errors";
 
-export function ServiceCentersDialogEdit({
-  isEditDialogOpen,
-  setEditDialogOpen,
-  serviceCenterInfo,
-  updateServiceCenterInfo,
-  session,
-}) {
+export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
   const headerRef = useRef(null);
+
+  const [open, setOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     reset,
-    setError,
     control,
-    formState: { isValid, errors },
-  } = useForm({
-    mode: "onSubmit",
-    defaultValues:
-      (serviceCenterInfo && {
-        name: serviceCenterInfo.name,
-        published: serviceCenterInfo.published,
-      }) ||
-      {},
-  });
-
-  useEffect(() => {
-    if (serviceCenterInfo) {
-      reset({
-        name: serviceCenterInfo.name,
-        published: serviceCenterInfo.published,
-      });
-    }
-  }, [serviceCenterInfo, reset]);
-
-  const nameError = errors?.name?.message;
+    setError,
+    formState: { errors },
+  } = useForm({ mode: "onSubmit", defaultValues: { published: true } });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const response = await putServiceCenter(
-        session.accessToken,
-        serviceCenterInfo.id,
-        data
-      );
-      updateServiceCenterInfo(response.id, response);
-      setEditDialogOpen(false);
+      const response = await createServiceCenter(session.accessToken, {
+        name: data.name,
+        published: data.published,
+      });
+      addServiceCenterInfo({
+        id: response.id,
+        name: response.name,
+        published: response.published,
+        tasks_count: 0,
+      });
+      setOpen(false);
       reset();
     } catch (error) {
       const responseNameError = error?.data?.name[0];
@@ -71,20 +52,25 @@ export function ServiceCentersDialogEdit({
     }
   });
 
+  const nameError = errors?.name?.message;
+
   return (
     <Dialog.Root
-      lazyMount
-      open={isEditDialogOpen}
-      onOpenChange={(e) => setEditDialogOpen(e.open)}
       initialFocusEl={() => headerRef.current}
+      lazyMount
+      open={open}
+      onOpenChange={(e) => setOpen(e.open)}
     >
+      <Dialog.Trigger asChild>
+        <Button colorPalette="yellow">Создать сервисный центр</Button>
+      </Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content as="form" onSubmit={onSubmit}>
             <Dialog.Header ref={headerRef} tabIndex="-1" outline="none">
               <Dialog.Title textStyle="2xl">
-                Изменить сервисный центр
+                Создание сервисного центра
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
@@ -130,8 +116,8 @@ export function ServiceCentersDialogEdit({
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
-                Изменить
+              <Button type="submit" colorPalette="yellow">
+                Создать сервисный центр
               </Button>
             </Dialog.Footer>
           </Dialog.Content>

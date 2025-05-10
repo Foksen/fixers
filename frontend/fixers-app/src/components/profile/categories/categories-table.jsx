@@ -54,18 +54,13 @@ const CategoryInfoMenu = ({
   </Menu.Root>
 );
 
-export function CategoriesTable({ initialCategoriesInfos, session }) {
-  const [categoriesInfos, setCategoriesInfos] = useState(
-    initialCategoriesInfos
-  );
+export function CategoriesTable({
+  session,
+  categoriesInfos,
+  updateCategoryInfo,
+}) {
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-
-  const updateCategoryInfo = (id, newCategoryInfo) => {
-    setCategoriesInfos((prev) =>
-      prev.map((cat) => (cat.id === id ? { ...cat, ...newCategoryInfo } : cat))
-    );
-  };
 
   return (
     <Box mt="5">
@@ -108,8 +103,8 @@ export function CategoriesTable({ initialCategoriesInfos, session }) {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {categoriesInfos.map((categoryInfo) => (
-            <Table.Row key={categoryInfo.id} h="16">
+          {categoriesInfos.map((categoryInfo, index) => (
+            <Table.Row key={index} h="16">
               <Table.Cell
                 borderTopWidth="1px"
                 borderBottomWidth="0"

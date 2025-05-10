@@ -54,20 +54,13 @@ const ServiceCenterInfoMenu = ({
   </Menu.Root>
 );
 
-export function ServiceCentersTable({ initialServiceCentersInfos, session }) {
-  const [serviceCentersInfos, setServiceCentersInfos] = useState(
-    initialServiceCentersInfos
-  );
+export function ServiceCentersTable({
+  session,
+  serviceCentersInfos,
+  updateServiceCenterInfo,
+}) {
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedServiceCenter, setSelectedServiceCenter] = useState(null);
-
-  const updateServiceCenterInfo = (id, newServiceCenterInfo) => {
-    setServiceCentersInfos((prev) =>
-      prev.map((cat) =>
-        cat.id === id ? { ...cat, ...newServiceCenterInfo } : cat
-      )
-    );
-  };
 
   return (
     <Box mt="5">
@@ -110,8 +103,8 @@ export function ServiceCentersTable({ initialServiceCentersInfos, session }) {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {serviceCentersInfos.map((serviceCenterInfo) => (
-            <Table.Row key={serviceCenterInfo.id} h="16">
+          {serviceCentersInfos.map((serviceCenterInfo, index) => (
+            <Table.Row key={index} h="16">
               <Table.Cell
                 borderTopWidth="1px"
                 borderBottomWidth="0"

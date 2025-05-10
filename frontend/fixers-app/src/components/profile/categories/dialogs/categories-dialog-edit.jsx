@@ -10,11 +10,7 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { putCategory } from "@/lib/api/tasks";
 import { useEffect, useRef } from "react";
-
-function mapNameError(error) {
-  console.log(error);
-  return "Ошибка при сохранении имени";
-}
+import { mapCategoryNameError } from "@/util/map-errors";
 
 export function CategoriesDialogEdit({
   isEditDialogOpen,
@@ -64,7 +60,7 @@ export function CategoriesDialogEdit({
       const responseNameError = error?.data?.name[0];
       if (responseNameError) {
         setError("name", {
-          message: mapNameError(responseNameError),
+          message: mapCategoryNameError(responseNameError),
         });
       } else {
         console.log(error);
