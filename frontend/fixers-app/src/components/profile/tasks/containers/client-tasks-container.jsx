@@ -52,8 +52,6 @@ export function ClientTasksContainer({
 
     const filtersData = mapFilters(filterValues);
     fitlerTasks(filtersData);
-
-    console.log("update tasks");
   }, [filterValues]);
 
   return (

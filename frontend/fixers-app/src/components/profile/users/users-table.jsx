@@ -1,6 +1,11 @@
+"use client";
+
 import { USER_ROLE } from "@/constants/user-roles";
 import { Badge, Box, IconButton, Menu, Portal, Table } from "@chakra-ui/react";
 import { TbCrown, TbDots, TbEyeglass } from "react-icons/tb";
+import { useState } from "react";
+import { UsersDialogEdit } from "./dialogs/users-dialog-edit";
+import { UsersDialogDelete } from "./dialogs/users-dialog-delete";
 
 function mapUserRoleLabel(role) {
   switch (role) {
@@ -48,7 +53,12 @@ function UserRoleBadge({ role }) {
   );
 }
 
-const UserInfoMenu = () => (
+const UserInfoMenu = ({
+  userInfo,
+  setEditDialogOpen,
+  setDeleteDialogOpen,
+  setSelectedUser,
+}) => (
   <Menu.Root>
     <Menu.Trigger asChild>
       <IconButton variant="ghost" size="sm">
@@ -58,17 +68,25 @@ const UserInfoMenu = () => (
     <Portal>
       <Menu.Positioner>
         <Menu.Content>
-          <Menu.Item value="edit" cursor="pointer">
+          <Menu.Item
+            value="edit"
+            cursor="pointer"
+            onClick={() => {
+              setSelectedUser(userInfo);
+              setEditDialogOpen(true);
+            }}
+          >
             Изменить
-          </Menu.Item>
-          <Menu.Item value="password" cursor="pointer">
-            Пароль
           </Menu.Item>
           <Menu.Item
             value="delete"
             cursor="pointer"
             color="fg.error"
             _hover={{ bg: "bg.error", color: "fg.error" }}
+            onClick={() => {
+              setSelectedUser(userInfo);
+              setDeleteDialogOpen(true);
+            }}
           >
             Удалить
           </Menu.Item>
@@ -78,7 +96,22 @@ const UserInfoMenu = () => (
   </Menu.Root>
 );
 
-export function UsersTable({ usersInfos }) {
+export function UsersTable({ initialUserInfos, session }) {
+  const [userInfos, setUserInfos] = useState(initialUserInfos);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const updateUserInfos = (id, newUserInfo) => {
+    setUserInfos((prev) =>
+      prev.map((cat) => (cat.id === id ? { ...cat, ...newUserInfo } : cat))
+    );
+  };
+
+  const removeUserInfo = (id) => {
+    setUserInfos((prev) => prev.filter((cat) => cat.id !== id));
+  };
+
   return (
     <Box mt="6">
       <Table.Root size="lg" maxW="5xl">
@@ -119,7 +152,7 @@ export function UsersTable({ usersInfos }) {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {usersInfos.map((userInfo) => (
+          {userInfos.map((userInfo) => (
             <Table.Row key={userInfo.id} h="16">
               <Table.Cell
                 borderTopWidth="1px"
@@ -156,12 +189,33 @@ export function UsersTable({ usersInfos }) {
                 borderBottomWidth="0"
                 borderColor="border.muted"
               >
-                <UserInfoMenu />
+                <UserInfoMenu
+                  userInfo={userInfo}
+                  setSelectedUser={setSelectedUser}
+                  setEditDialogOpen={setEditDialogOpen}
+                  setDeleteDialogOpen={setDeleteDialogOpen}
+                />
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>
+
+      <UsersDialogEdit
+        isEditDialogOpen={isEditDialogOpen}
+        setEditDialogOpen={setEditDialogOpen}
+        userInfo={selectedUser}
+        updateUserInfo={updateUserInfos}
+        session={session}
+      />
+
+      <UsersDialogDelete
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+        userInfo={selectedUser}
+        removeUserInfo={removeUserInfo}
+        session={session}
+      />
     </Box>
   );
 }

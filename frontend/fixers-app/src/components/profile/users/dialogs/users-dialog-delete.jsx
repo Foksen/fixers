@@ -1,23 +1,20 @@
-import { deleteServiceCenter } from "@/lib/api/tasks";
+import { deleteUser } from "@/lib/api/user";
 import { Button, Dialog, Portal, Text } from "@chakra-ui/react";
 import { useRef } from "react";
 
-export function ServiceCentersDialogDelete({
+export function UsersDialogDelete({
   isDeleteDialogOpen,
   setDeleteDialogOpen,
-  serviceCenterInfo,
-  removeServiceCenterInfo,
+  userInfo,
+  removeUserInfo,
   session,
 }) {
   const headerRef = useRef(null);
 
   const handleDeleteClick = async () => {
     try {
-      const result = await deleteServiceCenter(
-        session.accessToken,
-        serviceCenterInfo.id
-      );
-      removeServiceCenterInfo(serviceCenterInfo.id);
+      const result = await deleteUser(session.accessToken, userInfo.id);
+      removeUserInfo(userInfo.id);
       setDeleteDialogOpen(false);
     } catch (error) {
       console.error(error);
@@ -37,14 +34,12 @@ export function ServiceCentersDialogDelete({
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header pb="3" ref={headerRef} tabIndex="-1" outline="none">
-              <Dialog.Title textStyle="2xl">
-                Удаление сервисного центра
-              </Dialog.Title>
+              <Dialog.Title textStyle="2xl">Удаление пользователя</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
               <Text>
-                Вы уверены, что хотите удалить сервисный центр "
-                {serviceCenterInfo?.name}
+                Вы уверены, что хотите удалить пользователя "
+                {userInfo?.username}
                 "? После удаления его будет невозможно восстановить
               </Text>
             </Dialog.Body>

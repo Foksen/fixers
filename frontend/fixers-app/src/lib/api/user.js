@@ -14,3 +14,10 @@ export async function patchUser(accessToken, userId, data) {
     data: data,
   });
 }
+
+export async function deleteUser(accessToken, userId) {
+  return backendFetch(`/api/users/users/${userId}/`, {
+    method: "DELETE",
+    accessToken: accessToken,
+  });
+}

@@ -47,7 +47,7 @@ export function CategoriesDialogDelete({
                 <Button variant="outline">Отменить</Button>
               </Dialog.ActionTrigger>
               <Button colorPalette="red" onClick={handleDeleteClick}>
-                Удалить вид ремонта
+                Удалить
               </Button>
             </Dialog.Footer>
           </Dialog.Content>

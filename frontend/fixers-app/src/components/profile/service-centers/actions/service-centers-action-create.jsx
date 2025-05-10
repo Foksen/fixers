@@ -118,7 +118,7 @@ export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
                 </Button>
               </Dialog.ActionTrigger>
               <Button type="submit" colorPalette="yellow" disabled={!isValid}>
-                Создать сервисный центр
+                Создать
               </Button>
             </Dialog.Footer>
           </Dialog.Content>

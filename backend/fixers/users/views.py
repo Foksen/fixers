@@ -103,7 +103,7 @@ class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrModerator]
-    http_method_names = ['get', 'patch', 'put']
+    http_method_names = ['get', 'patch', 'put', 'delete']
 
     def get_object(self):
         if self.request.user.role != Role.MODERATOR:

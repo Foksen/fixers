@@ -7,22 +7,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { registerUser } from "@/lib/api/auth";
 import { toaster } from "../ui/toaster";
-
-function convertAuthErrorMsg(message) {
-  if (message == null) {
-    return "Неизвестная ошибка";
-  }
-  if (message.includes("user with that username already exists")) {
-    return "Указанное имя уже занято";
-  }
-  if (message.includes("user with this email already exists")) {
-    return "Указананя почта уже занята";
-  }
-  if (message.includes("Enter a valid email address")) {
-    return "Введите корректную почту";
-  }
-  return message;
-}
+import { mapCredentialsError } from "@/util/map-errors";
 
 export function AuthContainer() {
   const router = useRouter();
@@ -179,13 +164,13 @@ export function AuthContainer() {
 
       if (usernameErrors) {
         setRegisterError("username", {
-          message: convertAuthErrorMsg(usernameErrors[0]),
+          message: mapCredentialsError(usernameErrors[0]),
         });
       }
 
       if (emailErrors) {
         setRegisterError("email", {
-          message: convertAuthErrorMsg(emailErrors[0]),
+          message: mapCredentialsError(emailErrors[0]),
         });
       }
 

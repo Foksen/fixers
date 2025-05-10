@@ -116,7 +116,7 @@ export function CategoriesActionCreate({ session, addCategoryInfo }) {
                 </Button>
               </Dialog.ActionTrigger>
               <Button type="submit" colorPalette="yellow" disabled={!isValid}>
-                Создать вид ремонта
+                Создать
               </Button>
             </Dialog.Footer>
           </Dialog.Content>

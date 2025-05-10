@@ -154,7 +154,10 @@ export async function ProfilePageContainer({ profilePage, session }) {
 
     case PROFILE_PAGE.USERS:
       return (
-        <UsersContainer initialUserInfos={await fetchUserInfos(session)} />
+        <UsersContainer
+          initialUserInfos={await fetchUserInfos(session)}
+          session={session}
+        />
       );
 
     case PROFILE_PAGE.CATEGORIES:
