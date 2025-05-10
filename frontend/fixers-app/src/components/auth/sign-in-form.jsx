@@ -17,6 +17,7 @@ import { PasswordInput } from "../ui/password-input";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa6";
 import { Controller } from "react-hook-form";
+import { ACCENT_COLOR } from "@/constants/ui";
 
 const Dialog2fa = ({ control, codeError, onSubmit, resetField }) => (
   <Dialog.Root defaultOpen={true} onExitComplete={() => resetField("code")}>
@@ -136,7 +137,7 @@ export function SignInForm({
             disabled={!isValid}
             loading={isLoginSubmitLoading || null}
             loadingText="Войти"
-            colorPalette="yellow"
+            colorPalette={ACCENT_COLOR}
           >
             Войти
           </Button>
@@ -152,7 +153,7 @@ export function SignInForm({
         </Link>
       </Text>
 
-      <Separator my="4" w="full" />
+      {/* <Separator my="4" w="full" />
 
       <ButtonGroup grow>
         <Button variant="subtle" onClick={handleGoogleSignIn} disabled>
@@ -164,7 +165,8 @@ export function SignInForm({
           <FaGithub />
           Войти через GitHub
         </Button>
-      </ButtonGroup>
+      </ButtonGroup> */}
+
       {isLogin2faOpen && (
         <Dialog2fa
           control={loginControl}

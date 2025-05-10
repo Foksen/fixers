@@ -9,6 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { PasswordInput } from "../ui/password-input";
+import { ACCENT_COLOR } from "@/constants/ui";
 
 export function SignUpForm({
   handleToggleForm,
@@ -80,7 +81,7 @@ export function SignUpForm({
           </Field.Root>
         </Fieldset.Content>
 
-        <Button mt="8" type="submit" disabled={!isValid} colorPalette="yellow">
+        <Button mt="8" type="submit" disabled={!isValid} colorPalette={ACCENT_COLOR}>
           Зарегистрироваться
         </Button>
 

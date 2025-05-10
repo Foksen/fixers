@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useState, useRef } from "react";
 import { createCategory } from "@/lib/api/tasks";
 import { mapCategoryNameError } from "@/util/map-errors";
+import { ACCENT_COLOR } from "@/constants/ui";
 
 export function CategoriesActionCreate({ session, addCategoryInfo }) {
   const headerRef = useRef(null);
@@ -62,7 +63,7 @@ export function CategoriesActionCreate({ session, addCategoryInfo }) {
       onOpenChange={(e) => setOpen(e.open)}
     >
       <Dialog.Trigger asChild>
-        <Button colorPalette="yellow">Создать вид ремонта</Button>
+        <Button colorPalette={ACCENT_COLOR}>Создать вид ремонта</Button>
       </Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop />
@@ -97,7 +98,7 @@ export function CategoriesActionCreate({ session, addCategoryInfo }) {
                             field.onChange(checked)
                           }
                           gap="4"
-                          colorPalette="yellow"
+                          colorPalette={ACCENT_COLOR}
                         >
                           <Switch.HiddenInput onBlur={field.onBlur} />
                           <Switch.Control />
@@ -115,7 +116,7 @@ export function CategoriesActionCreate({ session, addCategoryInfo }) {
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
+              <Button type="submit" colorPalette={ACCENT_COLOR} disabled={!isValid}>
                 Создать
               </Button>
             </Dialog.Footer>

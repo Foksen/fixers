@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useState, useRef } from "react";
 import { createServiceCenter } from "@/lib/api/tasks";
 import { mapServiceCenterNameError } from "@/util/map-errors";
+import { ACCENT_COLOR } from "@/constants/ui";
 
 export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
   const headerRef = useRef(null);
@@ -62,7 +63,7 @@ export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
       onOpenChange={(e) => setOpen(e.open)}
     >
       <Dialog.Trigger asChild>
-        <Button colorPalette="yellow">Создать сервисный центр</Button>
+        <Button colorPalette={ACCENT_COLOR}>Создать сервисный центр</Button>
       </Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop />
@@ -99,7 +100,7 @@ export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
                             field.onChange(checked)
                           }
                           gap="4"
-                          colorPalette="yellow"
+                          colorPalette={ACCENT_COLOR}
                         >
                           <Switch.HiddenInput onBlur={field.onBlur} />
                           <Switch.Control />
@@ -117,7 +118,7 @@ export function ServiceCentersActionCreate({ session, addServiceCenterInfo }) {
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
+              <Button type="submit" colorPalette={ACCENT_COLOR} disabled={!isValid}>
                 Создать
               </Button>
             </Dialog.Footer>

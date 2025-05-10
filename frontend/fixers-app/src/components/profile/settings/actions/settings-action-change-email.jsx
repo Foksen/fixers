@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SETTINGS_ACTION_BUTTON_VARIANT } from "@/constants/ui";
+import { ACCENT_COLOR, SETTINGS_ACTION_BUTTON_VARIANT } from "@/constants/ui";
 import { patchUser } from "@/lib/api/user";
 import {
   Button,
@@ -98,7 +98,7 @@ export function SettingsActionChangeEmail({ session, setEmail }) {
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
+              <Button type="submit" colorPalette={ACCENT_COLOR} disabled={!isValid}>
                 Сменить почту
               </Button>
             </Dialog.Footer>
