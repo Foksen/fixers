@@ -13,6 +13,7 @@ import { useRef, useEffect } from "react";
 import { roleToView, USER_ROLE } from "@/constants/user-roles";
 import { patchUser } from "@/lib/api/user";
 import { mapCredentialsError } from "@/util/map-errors";
+import { ACCENT_COLOR } from "@/constants/ui";
 
 const rolesList = createListCollection({
   items: Object.values(USER_ROLE).map((role) => ({
@@ -193,7 +194,7 @@ export function UsersDialogEdit({
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
+              <Button type="submit" colorPalette={ACCENT_COLOR} disabled={!isValid}>
                 Изменить
               </Button>
             </Dialog.Footer>

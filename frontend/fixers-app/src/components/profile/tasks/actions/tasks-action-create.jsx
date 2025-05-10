@@ -1,3 +1,4 @@
+import { ACCENT_COLOR } from "@/constants/ui";
 import { createTask } from "@/lib/api/tasks";
 import {
   Button,
@@ -58,7 +59,7 @@ export const TasksActionCreate = ({
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button colorPalette="yellow">Создать заявку</Button>
+        <Button colorPalette={ACCENT_COLOR}>Создать заявку</Button>
       </Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop />
@@ -186,7 +187,7 @@ export const TasksActionCreate = ({
                 </Button>
               </Dialog.ActionTrigger>
               <Dialog.ActionTrigger asChild disabled={!isValid}>
-                <Button type="submit" colorPalette="yellow">
+                <Button type="submit" colorPalette={ACCENT_COLOR}>
                   Создать
                 </Button>
               </Dialog.ActionTrigger>

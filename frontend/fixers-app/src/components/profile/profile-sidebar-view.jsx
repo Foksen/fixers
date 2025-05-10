@@ -3,7 +3,7 @@ import {
   PROFILE_PAGE,
   PROFILE_PAGE_AUTHORITIES,
 } from "@/constants/profile-pages";
-import { RAINBOW_AVATAR_COLORS } from "@/constants/ui";
+import { ACCENT_COLOR, RAINBOW_AVATAR_COLORS } from "@/constants/ui";
 import { roleToView, USER_ROLE } from "@/constants/user-roles";
 import { pickPalette } from "@/util/pick-palette";
 import {
@@ -48,7 +48,8 @@ function mapNotificationsLinkLabel(newNotificationsCount) {
         h="6"
         right="0"
         align="center"
-        bg="yellow.solid"
+        bg={`${ACCENT_COLOR}.solid`}
+        color={`${ACCENT_COLOR}.contrast`}
         rounded="full"
         textStyle="xs"
         fontWeight="semibold"
@@ -89,7 +90,7 @@ export const SidebarProfile = ({
       <AvatarGroup size={size}>
         <Avatar.Root
           colorPalette={
-            RAINBOW_AVATAR_COLORS ? pickPalette(username) : "yellow"
+            RAINBOW_AVATAR_COLORS ? pickPalette(username) : ACCENT_COLOR
           }
         >
           <Avatar.Fallback name={username} />

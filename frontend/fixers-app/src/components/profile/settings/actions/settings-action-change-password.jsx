@@ -1,5 +1,5 @@
 import { PasswordInput } from "@/components/ui/password-input";
-import { SETTINGS_ACTION_BUTTON_VARIANT } from "@/constants/ui";
+import { ACCENT_COLOR, SETTINGS_ACTION_BUTTON_VARIANT } from "@/constants/ui";
 import { patchUser } from "@/lib/api/user";
 import { Button, Dialog, Field, Fieldset, Portal } from "@chakra-ui/react";
 import { useState } from "react";
@@ -102,7 +102,7 @@ export function SettingsActionChangePassword({ session }) {
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
+              <Button type="submit" colorPalette={ACCENT_COLOR} disabled={!isValid}>
                 Сменить пароль
               </Button>
             </Dialog.Footer>

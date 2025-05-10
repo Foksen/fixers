@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { putServiceCenter } from "@/lib/api/tasks";
 import { useEffect, useRef } from "react";
 import { mapServiceCenterNameError } from "@/util/map-errors";
+import { ACCENT_COLOR } from "@/constants/ui";
 
 export function ServiceCentersDialogEdit({
   isEditDialogOpen,
@@ -113,7 +114,7 @@ export function ServiceCentersDialogEdit({
                             field.onChange(checked)
                           }
                           gap="4"
-                          colorPalette="yellow"
+                          colorPalette={ACCENT_COLOR}
                         >
                           <Switch.HiddenInput onBlur={field.onBlur} />
                           <Switch.Control />
@@ -131,7 +132,7 @@ export function ServiceCentersDialogEdit({
                   Отменить
                 </Button>
               </Dialog.ActionTrigger>
-              <Button type="submit" colorPalette="yellow" disabled={!isValid}>
+              <Button type="submit" colorPalette={ACCENT_COLOR} disabled={!isValid}>
                 Изменить
               </Button>
             </Dialog.Footer>
