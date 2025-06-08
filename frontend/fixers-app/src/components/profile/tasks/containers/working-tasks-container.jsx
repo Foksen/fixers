@@ -76,6 +76,7 @@ export function WorkingTasksContainer({
           ],
         }),
         tasks: tasks,
+        session: session,
       })}
     />
   );

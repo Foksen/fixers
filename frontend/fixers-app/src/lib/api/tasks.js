@@ -93,3 +93,18 @@ export async function createTask(accessToken, taskData) {
     data: taskData,
   });
 }
+
+export async function putTask(accessToken, taskId, taskData) {
+  return backendFetch(`/api/tasks/tasks/${taskId}/`, {
+    method: "PUT",
+    accessToken: accessToken,
+    data: taskData,
+  });
+}
+
+export async function deleteTask(accessToken, taskId) {
+  return backendFetch(`/api/tasks/tasks/${taskId}/`, {
+    method: "DELETE",
+    accessToken: accessToken,
+  });
+}

@@ -65,7 +65,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         user = self.request.user
-        if user.role in [Role.MASTER, Role.CLIENT]:
+        if user.role in [Role.MASTER, Role.CLIENT, Role.MODERATOR]:
             serializer.save()
         else:
             raise PermissionDenied("You do not have permission to update this task.")

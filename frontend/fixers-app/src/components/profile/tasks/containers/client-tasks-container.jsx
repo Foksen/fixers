@@ -29,6 +29,7 @@ export function ClientTasksContainer({
   initialTasks,
   initialCategories,
   initialServiceCenters,
+  initialMasters,
 }) {
   const firstRender = useRef(true);
 
@@ -68,6 +69,10 @@ export function ClientTasksContainer({
           ],
         }),
         tasks: tasks,
+        session: session,
+        initialCategories: initialCategories,
+        initialServiceCenters: initialServiceCenters,
+        initialMasters: initialMasters,
       })}
     />
   );

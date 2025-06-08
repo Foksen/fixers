@@ -7,6 +7,14 @@ export async function getUserInfos(accessToken) {
   });
 }
 
+export async function getUsers(accessToken, filters) {
+  return backendFetch("/api/users/users/", {
+    method: "GET",
+    accessToken: accessToken,
+    params: filters,
+  });
+}
+
 export async function patchUser(accessToken, userId, data) {
   return backendFetch(`/api/users/users/${userId}/`, {
     method: "PATCH",

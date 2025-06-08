@@ -11,10 +11,11 @@ import { TasksContainer } from "./tasks/containers/tasks-container";
 import { ClientTasksContainer } from "./tasks/containers/client-tasks-container";
 import { WorkingTasksContainer } from "./tasks/containers/working-tasks-container";
 import { UsersContainer } from "./users/users-conainter";
-import { getUserInfos } from "@/lib/api/user";
+import { getUserInfos, getUsers } from "@/lib/api/user";
 import { CategoriesContainer } from "./categories/categories-container";
 import { ServiceCentersContainer } from "./service-centers/service-centers-container";
 import { NotificationsContainer } from "./notifications/notifications-container";
+import { USER_ROLE } from "@/constants/user-roles";
 
 const fetchTasks = async (session) => {
   try {
@@ -83,6 +84,16 @@ const fetchServiceCentersInfos = async (session) => {
   }
 };
 
+const fetchMasters = async (session) => {
+  try {
+    const result = await getUsers(session.accessToken, { role: USER_ROLE.MASTER });
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching masters: ", error);
+    return [];
+  }
+};
+
 const notifications = [
   {
     id: 1,
@@ -128,6 +139,7 @@ export async function ProfilePageContainer({ profilePage, session }) {
           initialTasks={await fetchTasks(session)}
           initialCategories={await fetchCategories({ published: true })}
           initialServiceCenters={await fetchServiceCenters({ published: true })}
+          initialMasters={await fetchMasters(session)}
         />
       );
 
@@ -139,6 +151,7 @@ export async function ProfilePageContainer({ profilePage, session }) {
           initialTasks={initialClientTasks}
           initialCategories={await fetchCategories()}
           initialServiceCenters={await fetchServiceCenters()}
+          initialMasters={await fetchMasters(session)}
         />
       );
 
@@ -149,6 +162,7 @@ export async function ProfilePageContainer({ profilePage, session }) {
           initialTasks={await fetchMasterTasks(session)}
           initialCategories={await fetchCategories()}
           initialServiceCenters={await fetchServiceCenters()}
+          initialMasters={await fetchMasters(session)}
         />
       );
 

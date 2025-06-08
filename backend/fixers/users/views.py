@@ -1,10 +1,11 @@
 import waffle
 from django.contrib.auth import authenticate
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, filters
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import User, Role, TrustedIp, EmailAuthCode
 from .permissions import IsMasterOrModerator, IsOwnerOrModerator
@@ -104,6 +105,9 @@ class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrModerator]
     http_method_names = ['get', 'patch', 'put', 'delete']
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['role']
+    ordering_fields = ['id', 'username', 'email']
 
     def get_object(self):
         if self.request.user.role != Role.MODERATOR:

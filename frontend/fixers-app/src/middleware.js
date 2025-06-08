@@ -37,11 +37,11 @@ export async function middleware(req) {
     const userAvailablePages = PROFILE_PAGE_AUTHORITIES[userRole];
 
     if (
-      !userAvailablePages.includes(profilePage) &&
+      !userAvailablePages?.includes(profilePage) &&
       !Object.values(PROFILE_COMMON_PAGE).includes(profilePage)
     ) {
       return NextResponse.redirect(
-        new URL(`/profile/${userAvailablePages[0]}`, req.url)
+        new URL(`/profile/${userAvailablePages?.[0]}`, req.url)
       );
     }
   }

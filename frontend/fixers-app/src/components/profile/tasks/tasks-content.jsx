@@ -1,7 +1,7 @@
 import { Box, HStack } from "@chakra-ui/react";
 import { TaskGrid } from "./grid/task-grid";
 
-export function TasksContent({ filters, actionsContainer, tasks }) {
+export function TasksContent({ filters, actionsContainer, tasks, session, initialCategories, initialServiceCenters, initialMasters }) {
   return (
     <Box>
       <HStack w="full" justifyContent="space-between" align="end" mt="4">
@@ -9,7 +9,14 @@ export function TasksContent({ filters, actionsContainer, tasks }) {
         {actionsContainer}
       </HStack>
 
-      <TaskGrid mt="8" tasks={tasks} />
+      <TaskGrid 
+        mt="8" 
+        tasks={tasks} 
+        session={session} 
+        initialCategories={initialCategories}
+        initialServiceCenters={initialServiceCenters}
+        initialMasters={initialMasters}
+      />
     </Box>
   );
 }

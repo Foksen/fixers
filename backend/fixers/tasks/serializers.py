@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Task, TaskCategory, ServiceCenter
+from users.models import Role
 
 
 class TaskCategorySerializer(serializers.ModelSerializer):
@@ -42,7 +43,14 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         errors = {}
-
+        
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            user_role = getattr(request.user, 'role', None)
+            
+            if user_role == Role.MODERATOR:
+                return attrs
+        
         if self.instance is None:
             category = attrs.get("category")
             service_center = attrs.get("service_center")

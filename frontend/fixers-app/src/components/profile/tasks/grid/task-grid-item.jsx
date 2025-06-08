@@ -1,6 +1,67 @@
 import { TASK_STATUS } from "@/constants/tasks-status";
-import { Badge, Table, Text, VStack } from "@chakra-ui/react";
+import { USER_ROLE } from "@/constants/user-roles";
+import {
+  Badge,
+  IconButton,
+  Menu,
+  Portal,
+  Table,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import moment from "moment";
+import { TbDots } from "react-icons/tb";
+
+const TaskGridItemMenu = ({
+  role,
+  taskInfo,
+  onEditTask,
+  onDeleteTask,
+}) => {
+  return (
+    <Menu.Root>
+      <Menu.Trigger asChild>
+        <IconButton
+          position="absolute"
+          right="4"
+          top="6"
+          variant="ghost"
+          size="sm"
+          outline="none"
+        >
+          <TbDots />
+        </IconButton>
+      </Menu.Trigger>
+      <Portal>
+        <Menu.Positioner>
+          <Menu.Content>
+            {[USER_ROLE.MODERATOR].includes(role) && (
+              <Menu.Item
+                value="edit"
+                cursor="pointer"
+                onClick={() => onEditTask(taskInfo)}
+              >
+                Изменить
+              </Menu.Item>
+            )}
+
+            {[USER_ROLE.MODERATOR].includes(role) && (
+              <Menu.Item
+                value="delete"
+                cursor="pointer"
+                color="fg.error"
+                _hover={{ bg: "bg.error", color: "fg.error" }}
+                onClick={() => onDeleteTask(taskInfo)}
+              >
+                Удалить
+              </Menu.Item>
+            )}
+          </Menu.Content>
+        </Menu.Positioner>
+      </Portal>
+    </Menu.Root>
+  );
+};
 
 function mapTaskStatusTitle(status) {
   switch (status) {
@@ -50,11 +111,19 @@ const TaskInfo = ({ title, isLast, isValue }) => (
   </Table.Cell>
 );
 
-export function TaskGridItem({ task }) {
-  const created_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
+export function TaskGridItem({ session, task, onEditTask, onDeleteTask }) {
+  const created_at = moment(task.created_at).format("DD.MM.YYYY HH:mm");
   const modified_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
+  
   return (
-    <VStack px="7" py="6" borderWidth="1px" align="start" rounded="sm">
+    <VStack
+      position="relative"
+      px="7"
+      py="6"
+      borderWidth="1px"
+      align="start"
+      rounded="sm"
+    >
       <Text fontWeight="medium" textStyle="2xl">
         {`${task.description}`}
       </Text>
@@ -109,6 +178,15 @@ export function TaskGridItem({ task }) {
           </Table.Row>
         </Table.Body>
       </Table.Root>
+
+      {[USER_ROLE.MASTER, USER_ROLE.MODERATOR].includes(session.user.role) && (
+        <TaskGridItemMenu 
+          role={session.user.role} 
+          taskInfo={task}
+          onEditTask={onEditTask}
+          onDeleteTask={onDeleteTask}
+        />
+      )}
     </VStack>
   );
 }

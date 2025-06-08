@@ -1,11 +1,41 @@
 import { Box, Grid, HStack, Icon } from "@chakra-ui/react";
 import { TaskGridItem } from "./task-grid-item";
 import { IoSearch } from "react-icons/io5";
+import { useState } from "react";
+import { TasksDialogEdit } from "../dialogs/tasks-dialog-edit";
+import { TasksDialogDelete } from "../dialogs/tasks-dialog-delete";
 
-export function TaskGrid({ tasks, ...props }) {
+export function TaskGrid({ tasks, session, initialCategories, initialServiceCenters, initialMasters, ...props }) {
+  const [tasksList, setTasksList] = useState(tasks);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  
+  const [isLoading, setIsLoading] = useState(false);
+
+  const removeTaskInfo = (taskId) => {
+    setTasksList((prev) => prev.filter((task) => task.id !== taskId));
+  };
+
+  const updateTaskInfo = (id, newTaskInfo) => {
+    setTasksList((prev) => 
+      prev.map((task) => (task.id === id ? { ...task, ...newTaskInfo } : task))
+    );
+  };
+
+  const handleEditTask = (task) => {
+    setSelectedTask(task);
+    setEditDialogOpen(true);
+  };
+
+  const handleDeleteTask = (task) => {
+    setSelectedTask(task);
+    setDeleteDialogOpen(true);
+  };
+
   return (
     <Box {...props}>
-      {tasks == null || tasks.length == 0 ? (
+      {tasksList == null || tasksList.length == 0 ? (
         <HStack textStyle="lg" fontWeight="medium">
           <Icon mr="3">
             <IoSearch />
@@ -22,11 +52,37 @@ export function TaskGrid({ tasks, ...props }) {
           }}
           gap="4"
         >
-          {tasks.map((task, index) => (
-            <TaskGridItem task={task} key={index} />
+          {tasksList.map((task) => (
+            <TaskGridItem 
+              task={task} 
+              session={session} 
+              key={task.id}
+              onEditTask={handleEditTask}
+              onDeleteTask={handleDeleteTask}
+            />
           ))}
         </Grid>
       )}
+
+      <TasksDialogEdit
+        isEditDialogOpen={isEditDialogOpen}
+        setEditDialogOpen={setEditDialogOpen}
+        taskInfo={selectedTask}
+        updateTaskInfo={updateTaskInfo}
+        session={session}
+        initialCategories={initialCategories}
+        initialServiceCenters={initialServiceCenters}
+        initialMasters={initialMasters}
+        isDataLoading={isLoading}
+      />
+
+      <TasksDialogDelete
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+        taskInfo={selectedTask}
+        removeTaskInfo={removeTaskInfo}
+        session={session}
+      />
     </Box>
   );
 }

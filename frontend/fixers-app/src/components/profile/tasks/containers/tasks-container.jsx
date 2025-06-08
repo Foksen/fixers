@@ -26,6 +26,7 @@ export function TasksContainer({
   initialTasks,
   initialCategories,
   initialServiceCenters,
+  initialMasters,
 }) {
   const firstRender = useRef(true);
 
@@ -75,8 +76,11 @@ export function TasksContainer({
             />
           </TasksActionsContainer>
         ),
-
         tasks: tasks,
+        session: session,
+        initialCategories: initialCategories,
+        initialServiceCenters: initialServiceCenters,
+        initialMasters: initialMasters,
       })}
     />
   );
