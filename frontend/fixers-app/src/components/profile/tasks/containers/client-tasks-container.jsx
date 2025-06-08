@@ -45,6 +45,12 @@ export function ClientTasksContainer({
     [session]
   );
 
+  const updateTaskInList = useCallback((taskId, updatedTask) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => task.id === taskId ? updatedTask : task)
+    );
+  }, []);
+
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -73,6 +79,7 @@ export function ClientTasksContainer({
         initialCategories: initialCategories,
         initialServiceCenters: initialServiceCenters,
         initialMasters: initialMasters,
+        updateTaskInList: updateTaskInList,
       })}
     />
   );

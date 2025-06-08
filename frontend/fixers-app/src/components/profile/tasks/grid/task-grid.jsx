@@ -1,17 +1,30 @@
 import { Box, Grid, HStack, Icon } from "@chakra-ui/react";
 import { TaskGridItem } from "./task-grid-item";
 import { IoSearch } from "react-icons/io5";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TasksDialogEdit } from "../dialogs/tasks-dialog-edit";
 import { TasksDialogDelete } from "../dialogs/tasks-dialog-delete";
 
-export function TaskGrid({ tasks, session, initialCategories, initialServiceCenters, initialMasters, ...props }) {
+export function TaskGrid({ 
+  tasks, 
+  session, 
+  initialCategories, 
+  initialServiceCenters, 
+  initialMasters, 
+  updateTaskInList,
+  ...props 
+}) {
   const [tasksList, setTasksList] = useState(tasks);
   const [selectedTask, setSelectedTask] = useState(null);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Keep local state in sync with props
+  useEffect(() => {
+    setTasksList(tasks);
+  }, [tasks]);
 
   const removeTaskInfo = (taskId) => {
     setTasksList((prev) => prev.filter((task) => task.id !== taskId));
@@ -19,13 +32,21 @@ export function TaskGrid({ tasks, session, initialCategories, initialServiceCent
 
   const updateTaskInfo = (id, newTaskInfo) => {
     setTasksList((prev) => 
-      prev.map((task) => (task.id === id ? { ...task, ...newTaskInfo } : task))
+      prev.map((task) => task.id === id ? newTaskInfo : task)
     );
+    
+    if (updateTaskInList) {
+      updateTaskInList(id, newTaskInfo);
+    }
   };
 
   const handleEditTask = (task) => {
     setSelectedTask(task);
     setEditDialogOpen(true);
+  };
+
+  const handleStatusChange = (updatedTask) => {
+    updateTaskInfo(updatedTask.id, updatedTask);
   };
 
   const handleDeleteTask = (task) => {
@@ -59,6 +80,7 @@ export function TaskGrid({ tasks, session, initialCategories, initialServiceCent
               key={task.id}
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
+              onStatusChange={handleStatusChange}
             />
           ))}
         </Grid>

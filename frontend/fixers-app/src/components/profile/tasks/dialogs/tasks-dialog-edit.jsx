@@ -13,6 +13,7 @@ import { useRef, useEffect } from "react";
 import { TASK_STATUS } from "@/constants/tasks-status";
 import { ACCENT_COLOR } from "@/constants/ui";
 import { putTask } from "@/lib/api/tasks";
+import { USER_ROLE } from "@/constants/user-roles";
 
 const statusList = createListCollection({
   items: Object.values(TASK_STATUS).map((status) => ({
@@ -59,6 +60,9 @@ export function TasksDialogEdit({
   isDataLoading = false,
 }) {
   const headerRef = useRef(null);
+  const isModerator = session?.user?.role === USER_ROLE.MODERATOR;
+  const isMaster = session?.user?.role === USER_ROLE.MASTER;
+  const canChangeStatus = isModerator || isMaster;
   
   const categoriesList = createListCollection({
     items: initialCategories?.map((category) => ({
@@ -81,8 +85,7 @@ export function TasksDialogEdit({
       { value: "null", label: "Не назначен" },
       ...(initialMasters?.map((master) => ({
         value: master.id,
-        label: master.username,
-        role: master.role
+        label: master.username
       })) || []),
     ],
   });
@@ -127,35 +130,57 @@ export function TasksDialogEdit({
   const onSubmit = handleSubmit(async (data) => {
     const description = data.description;
     const status = data.status[0];
-    const categoryId = data.category[0];
-    const serviceCenterId = data.service_center[0];
-    const masterId = data.master[0] === "null" ? null : data.master[0];
-
+    
     try {
-      const response = await putTask(session.accessToken, taskInfo.id, {
-        description: description,
-        status: status,
-        category: categoryId,
-        service_center: serviceCenterId,
-        master: masterId,
-      });
+      let submitData;
+      
+      if (isModerator) {
+        const categoryId = data.category?.[0];
+        const serviceCenterId = data.service_center?.[0];
+        const masterId = data.master?.[0];
+        
+        submitData = {
+          description,
+          status,
+          category: categoryId,
+          service_center: serviceCenterId,
+          master_id: masterId === "null" ? null : masterId
+        };
+      } else {
+        submitData = {
+          description,
+          status,
+          category: taskInfo.category,
+          service_center: taskInfo.service_center
+        };
+      }
 
-      const category = initialCategories?.find(c => c.id === categoryId);
-      const serviceCenter = initialServiceCenters?.find(c => c.id === serviceCenterId);
-      const master = initialMasters?.find(m => m.id === masterId);
+      const response = await putTask(session.accessToken, taskInfo.id, submitData);
 
-      updateTaskInfo(response.id, {
+      const categoryName = taskInfo?.category_name || "";
+      const serviceCenterName = taskInfo?.service_center_name || "";
+      const masterUsername = taskInfo?.master_username || null;
+
+      const category = initialCategories?.find(c => c?.id === response?.category);
+      const serviceCenter = initialServiceCenters?.find(c => c?.id === response?.service_center);
+      const master = initialMasters?.find(m => m?.id === response?.master);
+      
+      const masterName = response.master ? (master?.username || masterUsername) : null;
+      
+      const updatedTask = {
         id: response.id,
         description: response.description,
         status: response.status,
         category: response.category,
-        category_name: category?.name || "",
+        category_name: category?.name || categoryName,
         service_center: response.service_center,
-        service_center_name: serviceCenter?.name || "",
+        service_center_name: serviceCenter?.name || serviceCenterName,
         master: response.master,
-        master_username: master?.username || null,
+        master_username: masterName,
         modified_at: response.modified_at,
-      });
+      };
+      
+      updateTaskInfo(response.id, updatedTask);
       setEditDialogOpen(false);
       reset();
     } catch (error) {
@@ -174,7 +199,6 @@ export function TasksDialogEdit({
           message: error.data.service_center[0],
         });
       }
-      console.error(error);
     }
   });
 
@@ -206,139 +230,151 @@ export function TasksDialogEdit({
                     <Field.ErrorText>{descriptionError}</Field.ErrorText>
                   </Field.Root>
 
-                  <Field.Root invalid={categoryError}>
-                    <Field.Label>Вид ремонта</Field.Label>
-                    <Controller
-                      control={control}
-                      name="category"
-                      rules={{
-                        required: "Выберите вид ремонта",
-                      }}
-                      render={({ field }) => {
-                        return (
-                          <Select.Root
-                            name={field.name}
-                            value={field.value}
-                            onValueChange={({ value }) => field.onChange(value)}
-                            onInteractOutside={() => field.onBlur()}
-                            collection={categoriesList}
-                            disabled={isDataLoading || categoriesList.items.length === 0}
-                          >
-                            <Select.HiddenSelect />
-                            <Select.Control>
-                              <Select.Trigger>
-                                <Select.ValueText />
-                              </Select.Trigger>
-                              <Select.IndicatorGroup>
-                                <Select.Indicator />
-                              </Select.IndicatorGroup>
-                            </Select.Control>
-                            <Portal>
-                              <Select.Positioner>
-                                <Select.Content zIndex="popover">
-                                  {categoriesList.items.map((category) => (
-                                    <Select.Item item={category} key={category.value} disabled={!category.published}>
-                                      {category.label}
-                                      <Select.ItemIndicator />
-                                    </Select.Item>
-                                  ))}
-                                </Select.Content>
-                              </Select.Positioner>
-                            </Portal>
-                          </Select.Root>
-                        );
-                      }}
-                    />
-                    <Field.ErrorText>{categoryError}</Field.ErrorText>
-                  </Field.Root>
+                  {isModerator && (
+                    <>
+                      <Field.Root invalid={categoryError}>
+                        <Field.Label>Вид ремонта</Field.Label>
+                        <Controller
+                          control={control}
+                          name="category"
+                          rules={{
+                            required: "Выберите вид ремонта",
+                          }}
+                          render={({ field }) => {
+                            return (
+                              <Select.Root
+                                name={field.name}
+                                value={field.value}
+                                onValueChange={({ value }) => field.onChange(value)}
+                                onInteractOutside={() => field.onBlur()}
+                                collection={categoriesList}
+                                disabled={isDataLoading || categoriesList.items.length === 0}
+                              >
+                                <Select.HiddenSelect />
+                                <Select.Control>
+                                  <Select.Trigger>
+                                    <Select.ValueText />
+                                  </Select.Trigger>
+                                  <Select.IndicatorGroup>
+                                    <Select.Indicator />
+                                  </Select.IndicatorGroup>
+                                </Select.Control>
+                                <Portal>
+                                  <Select.Positioner>
+                                    <Select.Content zIndex="popover">
+                                      {categoriesList.items.map((category) => (
+                                        <Select.Item 
+                                          item={category} 
+                                          key={category.value} 
+                                          disabled={!category.published}
+                                        >
+                                          {category.label}
+                                          <Select.ItemIndicator />
+                                        </Select.Item>
+                                      ))}
+                                    </Select.Content>
+                                  </Select.Positioner>
+                                </Portal>
+                              </Select.Root>
+                            );
+                          }}
+                        />
+                        <Field.ErrorText>{categoryError}</Field.ErrorText>
+                      </Field.Root>
 
-                  <Field.Root invalid={serviceCenterError}>
-                    <Field.Label>Сервисный центр</Field.Label>
-                    <Controller
-                      control={control}
-                      name="service_center"
-                      rules={{
-                        required: "Выберите сервисный центр",
-                      }}
-                      render={({ field }) => {
-                        return (
-                          <Select.Root
-                            name={field.name}
-                            value={field.value}
-                            onValueChange={({ value }) => field.onChange(value)}
-                            onInteractOutside={() => field.onBlur()}
-                            collection={serviceCentersList}
-                            disabled={isDataLoading || serviceCentersList.items.length === 0}
-                          >
-                            <Select.HiddenSelect />
-                            <Select.Control>
-                              <Select.Trigger>
-                                <Select.ValueText />
-                              </Select.Trigger>
-                              <Select.IndicatorGroup>
-                                <Select.Indicator />
-                              </Select.IndicatorGroup>
-                            </Select.Control>
-                            <Portal>
-                              <Select.Positioner>
-                                <Select.Content zIndex="popover">
-                                  {serviceCentersList.items.map((center) => (
-                                    <Select.Item item={center} key={center.value} disabled={!center.published}>
-                                      {center.label}
-                                      <Select.ItemIndicator />
-                                    </Select.Item>
-                                  ))}
-                                </Select.Content>
-                              </Select.Positioner>
-                            </Portal>
-                          </Select.Root>
-                        );
-                      }}
-                    />
-                    <Field.ErrorText>{serviceCenterError}</Field.ErrorText>
-                  </Field.Root>
+                      <Field.Root invalid={serviceCenterError}>
+                        <Field.Label>Сервисный центр</Field.Label>
+                        <Controller
+                          control={control}
+                          name="service_center"
+                          rules={{
+                            required: "Выберите сервисный центр",
+                          }}
+                          render={({ field }) => {
+                            return (
+                              <Select.Root
+                                name={field.name}
+                                value={field.value}
+                                onValueChange={({ value }) => field.onChange(value)}
+                                onInteractOutside={() => field.onBlur()}
+                                collection={serviceCentersList}
+                                disabled={isDataLoading || serviceCentersList.items.length === 0}
+                              >
+                                <Select.HiddenSelect />
+                                <Select.Control>
+                                  <Select.Trigger>
+                                    <Select.ValueText />
+                                  </Select.Trigger>
+                                  <Select.IndicatorGroup>
+                                    <Select.Indicator />
+                                  </Select.IndicatorGroup>
+                                </Select.Control>
+                                <Portal>
+                                  <Select.Positioner>
+                                    <Select.Content zIndex="popover">
+                                      {serviceCentersList.items.map((center) => (
+                                        <Select.Item 
+                                          item={center} 
+                                          key={center.value} 
+                                          disabled={!center.published}
+                                        >
+                                          {center.label}
+                                          <Select.ItemIndicator />
+                                        </Select.Item>
+                                      ))}
+                                    </Select.Content>
+                                  </Select.Positioner>
+                                </Portal>
+                              </Select.Root>
+                            );
+                          }}
+                        />
+                        <Field.ErrorText>{serviceCenterError}</Field.ErrorText>
+                      </Field.Root>
 
-                  <Field.Root>
-                    <Field.Label>Мастер</Field.Label>
-                    <Controller
-                      control={control}
-                      name="master"
-                      render={({ field }) => {
-                        return (
-                          <Select.Root
-                            name={field.name}
-                            value={field.value}
-                            onValueChange={({ value }) => field.onChange(value)}
-                            onInteractOutside={() => field.onBlur()}
-                            collection={mastersList}
-                            disabled={isDataLoading}
-                          >
-                            <Select.HiddenSelect />
-                            <Select.Control>
-                              <Select.Trigger>
-                                <Select.ValueText />
-                              </Select.Trigger>
-                              <Select.IndicatorGroup>
-                                <Select.Indicator />
-                              </Select.IndicatorGroup>
-                            </Select.Control>
-                            <Portal>
-                              <Select.Positioner>
-                                <Select.Content zIndex="popover">
-                                  {mastersList.items.map((master) => (
-                                    <Select.Item item={master} key={master.value}>
-                                      {master.label}
-                                      <Select.ItemIndicator />
-                                    </Select.Item>
-                                  ))}
-                                </Select.Content>
-                              </Select.Positioner>
-                            </Portal>
-                          </Select.Root>
-                        );
-                      }}
-                    />
-                  </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Мастер</Field.Label>
+                        <Controller
+                          control={control}
+                          name="master"
+                          render={({ field }) => {
+                            return (
+                              <Select.Root
+                                name={field.name}
+                                value={field.value}
+                                onValueChange={({ value }) => field.onChange(value)}
+                                onInteractOutside={() => field.onBlur()}
+                                collection={mastersList}
+                                disabled={isDataLoading}
+                              >
+                                <Select.HiddenSelect />
+                                <Select.Control>
+                                  <Select.Trigger>
+                                    <Select.ValueText />
+                                  </Select.Trigger>
+                                  <Select.IndicatorGroup>
+                                    <Select.Indicator />
+                                  </Select.IndicatorGroup>
+                                </Select.Control>
+                                <Portal>
+                                  <Select.Positioner>
+                                    <Select.Content zIndex="popover">
+                                      {mastersList.items.map((master) => (
+                                        <Select.Item item={master} key={master.value}>
+                                          {master.label}
+                                          <Select.ItemIndicator />
+                                        </Select.Item>
+                                      ))}
+                                    </Select.Content>
+                                  </Select.Positioner>
+                                </Portal>
+                              </Select.Root>
+                            );
+                          }}
+                        />
+                      </Field.Root>
+                    </>
+                  )}
 
                   <Field.Root>
                     <Field.Label>Статус</Field.Label>

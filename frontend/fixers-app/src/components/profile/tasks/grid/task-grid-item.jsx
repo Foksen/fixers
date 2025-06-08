@@ -10,21 +10,56 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import moment from "moment";
-import { TbDots } from "react-icons/tb";
+import { TbDots, TbChevronRight } from "react-icons/tb";
+import { putTask } from "@/lib/api/tasks";
+import { useState } from "react";
 
 const TaskGridItemMenu = ({
   role,
   taskInfo,
   onEditTask,
   onDeleteTask,
+  onStatusChange,
+  session,
 }) => {
+  const isModerator = role === USER_ROLE.MODERATOR;
+  const isMaster = role === USER_ROLE.MASTER;
+  const canChangeStatus = isModerator || isMaster;
+  
+  const handleStatusChange = async (status) => {
+    if (status === taskInfo.status) return;
+    
+    try {
+      const taskData = {
+        description: taskInfo.description,
+        status: status,
+        category: taskInfo.category,
+        service_center: taskInfo.service_center,
+        master: taskInfo.master
+      };
+
+      const response = await putTask(session.accessToken, taskInfo.id, taskData);
+      
+      if (response && onStatusChange) {
+        const updatedTask = {
+          ...taskInfo,
+          status: response.status || status,
+          modified_at: response.modified_at || new Date().toISOString()
+        };
+        
+        onStatusChange(updatedTask);
+      }
+    } catch (error) {
+    }
+  };
+
   return (
     <Menu.Root>
       <Menu.Trigger asChild>
         <IconButton
           position="absolute"
           right="4"
-          top="6"
+          top="4"
           variant="ghost"
           size="sm"
           outline="none"
@@ -35,7 +70,31 @@ const TaskGridItemMenu = ({
       <Portal>
         <Menu.Positioner>
           <Menu.Content>
-            {[USER_ROLE.MODERATOR].includes(role) && (
+            {canChangeStatus && (
+              <Menu.Root positioning={{ placement: "right-start", gutter: 2 }}>
+                <Menu.TriggerItem>
+                  Статус <TbChevronRight style={{ marginLeft: "auto" }} />
+                </Menu.TriggerItem>
+                <Portal>
+                  <Menu.Positioner>
+                    <Menu.Content>
+                      {Object.values(TASK_STATUS).map((status) => (
+                        <Menu.Item 
+                          key={status}
+                          value={status.toLowerCase()} 
+                          onClick={() => handleStatusChange(status)}
+                          disabled={taskInfo.status === status}
+                        >
+                          {mapTaskStatusTitle(status)}
+                        </Menu.Item>
+                      ))}
+                    </Menu.Content>
+                  </Menu.Positioner>
+                </Portal>
+              </Menu.Root>
+            )}
+
+            {isModerator && (
               <Menu.Item
                 value="edit"
                 cursor="pointer"
@@ -45,7 +104,7 @@ const TaskGridItemMenu = ({
               </Menu.Item>
             )}
 
-            {[USER_ROLE.MODERATOR].includes(role) && (
+            {isModerator && (
               <Menu.Item
                 value="delete"
                 cursor="pointer"
@@ -111,10 +170,14 @@ const TaskInfo = ({ title, isLast, isValue }) => (
   </Table.Cell>
 );
 
-export function TaskGridItem({ session, task, onEditTask, onDeleteTask }) {
+export function TaskGridItem({ session, task, onEditTask, onDeleteTask, onStatusChange }) {
   const created_at = moment(task.created_at).format("DD.MM.YYYY HH:mm");
   const modified_at = moment(task.modified_at).format("DD.MM.YYYY HH:mm");
-  
+  const userRole = session?.user?.role;
+  const isModerator = userRole === USER_ROLE.MODERATOR;
+  const isMaster = userRole === USER_ROLE.MASTER;
+  const canAccessMenu = isModerator || isMaster;
+
   return (
     <VStack
       position="relative"
@@ -179,12 +242,14 @@ export function TaskGridItem({ session, task, onEditTask, onDeleteTask }) {
         </Table.Body>
       </Table.Root>
 
-      {[USER_ROLE.MASTER, USER_ROLE.MODERATOR].includes(session.user.role) && (
+      {canAccessMenu && (
         <TaskGridItemMenu 
-          role={session.user.role} 
+          role={userRole} 
           taskInfo={task}
           onEditTask={onEditTask}
           onDeleteTask={onDeleteTask}
+          onStatusChange={onStatusChange}
+          session={session}
         />
       )}
     </VStack>

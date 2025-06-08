@@ -27,6 +27,8 @@ export function TasksContainer({
   initialCategories,
   initialServiceCenters,
   initialMasters,
+  publishedCategories,
+  publishedServiceCenters,
 }) {
   const firstRender = useRef(true);
 
@@ -41,6 +43,12 @@ export function TasksContainer({
     }, DEBOUNCE_WAIT_MS),
     [session]
   );
+  
+  const updateTaskInList = useCallback((taskId, updatedTask) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => task.id === taskId ? updatedTask : task)
+    );
+  }, []);
 
   useEffect(() => {
     if (firstRender.current) {
@@ -50,8 +58,6 @@ export function TasksContainer({
 
     const filtersData = mapFilters(filterValues);
     fitlerTasks(filtersData);
-
-    console.log("update tasks");
   }, [filterValues]);
 
   return (
@@ -67,8 +73,8 @@ export function TasksContainer({
           <TasksActionsContainer>
             <TasksActionCreate
               session={session}
-              initialCategories={initialCategories}
-              initialServiceCenters={initialServiceCenters}
+              initialCategories={publishedCategories}
+              initialServiceCenters={publishedServiceCenters}
               filterTasks={() => {
                 const filtersData = mapFilters(filterValues);
                 fitlerTasks(filtersData);
@@ -81,6 +87,7 @@ export function TasksContainer({
         initialCategories: initialCategories,
         initialServiceCenters: initialServiceCenters,
         initialMasters: initialMasters,
+        updateTaskInList: updateTaskInList,
       })}
     />
   );

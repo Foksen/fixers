@@ -50,6 +50,20 @@ class TaskSerializer(serializers.ModelSerializer):
             
             if user_role == Role.MODERATOR:
                 return attrs
+            
+            if self.instance and user_role in [Role.MASTER, Role.CLIENT]:
+                if 'category' in attrs and attrs['category'] != self.instance.category:
+                    category = attrs['category']
+                    if category and not category.published:
+                        errors["category"] = "Category is unavailable"
+                
+                if 'service_center' in attrs and attrs['service_center'] != self.instance.service_center:
+                    service_center = attrs['service_center']
+                    if service_center and not service_center.published:
+                        errors["service_center"] = "Service center is unavailable"
+                
+                if not errors:
+                    return attrs
         
         if self.instance is None:
             category = attrs.get("category")

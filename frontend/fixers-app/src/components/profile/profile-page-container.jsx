@@ -39,21 +39,49 @@ const fetchMasterTasks = async (session) => {
   }
 };
 
-const fetchCategories = async (filters) => {
+const fetchCategoriesIfNeeded = async (session) => {
+  if (session.user.role === USER_ROLE.MODERATOR || session.user.role === USER_ROLE.MASTER) {
+    try {
+      const result = await getCategories();
+      return result.results;
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return [];
+    }
+  }
+  return [];
+};
+
+const fetchPublishedCategories = async () => {
   try {
-    const result = await getCategories(filters);
+    const result = await getCategories({ published: true });
     return result.results;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("Error fetching published categories:", error);
+    return [];
   }
 };
 
-const fetchServiceCenters = async (filters) => {
+const fetchServiceCentersIfNeeded = async (session) => {
+  if (session.user.role === USER_ROLE.MODERATOR || session.user.role === USER_ROLE.MASTER) {
+    try {
+      const result = await getServiceCenters();
+      return result.results;
+    } catch (error) {
+      console.error("Error fetching service centers:", error);
+      return [];
+    }
+  }
+  return [];
+};
+
+const fetchPublishedServiceCenters = async () => {
   try {
-    const result = await getServiceCenters(filters);
+    const result = await getServiceCenters({ published: true });
     return result.results;
   } catch (error) {
-    console.error("Error fetching service centers:", error);
+    console.error("Error fetching published service centers:", error);
+    return [];
   }
 };
 
@@ -85,13 +113,16 @@ const fetchServiceCentersInfos = async (session) => {
 };
 
 const fetchMasters = async (session) => {
-  try {
-    const result = await getUsers(session.accessToken, { role: USER_ROLE.MASTER });
-    return result.results;
-  } catch (error) {
-    console.error("Error fetching masters: ", error);
-    return [];
+  if (session.user.role === USER_ROLE.MODERATOR) {
+    try {
+      const result = await getUsers(session.accessToken, { role: USER_ROLE.MASTER });
+      return result.results;
+    } catch (error) {
+      console.error("Error fetching masters: ", error);
+      return [];
+    }
   }
+  return [];
 };
 
 const notifications = [
@@ -137,9 +168,11 @@ export async function ProfilePageContainer({ profilePage, session }) {
         <TasksContainer
           session={session}
           initialTasks={await fetchTasks(session)}
-          initialCategories={await fetchCategories({ published: true })}
-          initialServiceCenters={await fetchServiceCenters({ published: true })}
+          initialCategories={await fetchCategoriesIfNeeded(session)}
+          initialServiceCenters={await fetchServiceCentersIfNeeded(session)}
           initialMasters={await fetchMasters(session)}
+          publishedCategories={await fetchPublishedCategories()}
+          publishedServiceCenters={await fetchPublishedServiceCenters()}
         />
       );
 
@@ -149,8 +182,8 @@ export async function ProfilePageContainer({ profilePage, session }) {
         <ClientTasksContainer
           session={session}
           initialTasks={initialClientTasks}
-          initialCategories={await fetchCategories()}
-          initialServiceCenters={await fetchServiceCenters()}
+          initialCategories={await fetchCategoriesIfNeeded(session)}
+          initialServiceCenters={await fetchServiceCentersIfNeeded(session)}
           initialMasters={await fetchMasters(session)}
         />
       );
@@ -160,9 +193,8 @@ export async function ProfilePageContainer({ profilePage, session }) {
         <WorkingTasksContainer
           session={session}
           initialTasks={await fetchMasterTasks(session)}
-          initialCategories={await fetchCategories()}
-          initialServiceCenters={await fetchServiceCenters()}
-          initialMasters={await fetchMasters(session)}
+          initialCategories={await fetchCategoriesIfNeeded(session)}
+          initialServiceCenters={await fetchServiceCentersIfNeeded(session)}
         />
       );
 

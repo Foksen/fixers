@@ -51,6 +51,12 @@ export function WorkingTasksContainer({
     }, DEBOUNCE_WAIT_MS),
     [session]
   );
+  
+  const updateTaskInList = useCallback((taskId, updatedTask) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => task.id === taskId ? updatedTask : task)
+    );
+  }, []);
 
   useEffect(() => {
     if (firstRender.current) {
@@ -77,6 +83,9 @@ export function WorkingTasksContainer({
         }),
         tasks: tasks,
         session: session,
+        initialCategories: initialCategories,
+        initialServiceCenters: initialServiceCenters,
+        updateTaskInList: updateTaskInList,
       })}
     />
   );

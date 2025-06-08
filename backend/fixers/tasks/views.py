@@ -2,9 +2,9 @@ from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
-from users.models import Role
+from users.models import Role, User
 from users.permissions import IsModerator, IsSafeOrIsModerator
 
 from .models import Task, TaskCategory, ServiceCenter
@@ -66,6 +66,20 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         user = self.request.user
         if user.role in [Role.MASTER, Role.CLIENT, Role.MODERATOR]:
+            if user.role == Role.MODERATOR:
+                master_id = self.request.data.get('master_id')
+                
+                if master_id == "null" or master_id == "" or master_id is None:
+                    serializer.save(master=None)
+                    return
+                
+                try:
+                    master = User.objects.get(id=master_id)
+                    serializer.save(master=master)
+                    return
+                except (User.DoesNotExist, ValueError):
+                    pass
+            
             serializer.save()
         else:
             raise PermissionDenied("You do not have permission to update this task.")

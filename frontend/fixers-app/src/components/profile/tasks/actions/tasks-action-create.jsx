@@ -43,17 +43,17 @@ export const TasksActionCreate = ({
   });
 
   const categories = createListCollection({
-    items: initialCategories.map((item) => ({
+    items: initialCategories?.map((item) => ({
       value: item.id,
       label: item.name,
-    })),
+    })) || [],
   });
 
   const serviceCenters = createListCollection({
-    items: initialServiceCenters.map((item) => ({
+    items: initialServiceCenters?.map((item) => ({
       value: item.id,
       label: item.name,
-    })),
+    })) || [],
   });
 
   return (
