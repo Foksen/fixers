@@ -14,6 +14,14 @@ export async function middleware(req) {
 
   const isAuth = !!token;
 
+  if (pathname === "/") {
+    if (isAuth) {
+      return NextResponse.redirect(new URL("/profile", req.url));
+    } else {
+      return NextResponse.redirect(new URL("/auth", req.url));
+    }
+  }
+
   // If is already authenticated
   const isAuthPath = pathname.startsWith("/auth");
 
@@ -50,5 +58,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/auth"],
+  matcher: ["/profile/:path*", "/auth", "/"],
 };
