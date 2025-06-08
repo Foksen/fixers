@@ -16,6 +16,7 @@ import { CategoriesContainer } from "./categories/categories-container";
 import { ServiceCentersContainer } from "./service-centers/service-centers-container";
 import { NotificationsContainer } from "./notifications/notifications-container";
 import { USER_ROLE } from "@/constants/user-roles";
+import { getNotifications } from "@/lib/api/notifications";
 
 const fetchTasks = async (session) => {
   try {
@@ -125,41 +126,15 @@ const fetchMasters = async (session) => {
   return [];
 };
 
-const notifications = [
-  {
-    id: 1,
-    task_id: 1,
-    user_id: 1,
-    sender_id: 1,
-    title: "Статус заявки изменён",
-    message:
-      'Мастер Иван изменил статус вашей заявки (Сломался экран телефона) на "В работе"',
-    is_new: false,
-    created_at: "05.05.2025 14:30",
-  },
-  {
-    id: 1,
-    task_id: 1,
-    user_id: 1,
-    sender_id: 1,
-    title: "Статус заявки изменён",
-    message:
-      'Мастер Иван изменил статус вашей заявки (Сломался экран телефона) на "В работе"',
-    is_new: false,
-    created_at: "01.01.1970 00:00",
-  },
-  {
-    id: 1,
-    task_id: 1,
-    user_id: 1,
-    sender_id: 1,
-    title: "Статус заявки изменён",
-    message:
-      'Мастер Иван изменил статус вашей заявки (Сломался экран телефона) на "В работе"',
-    is_new: false,
-    created_at: "06.05.2025 14:20",
-  },
-];
+const fetchNotifications = async (session) => {
+  try {
+    const result = await getNotifications(session.accessToken);
+    return result.results;
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    return [];
+  }
+};
 
 export async function ProfilePageContainer({ profilePage, session }) {
   switch (profilePage) {
@@ -226,7 +201,10 @@ export async function ProfilePageContainer({ profilePage, session }) {
       return <SettingsContainer session={session} />;
 
     case PROFILE_COMMON_PAGE.NOTIFICATIONS:
-      return <NotificationsContainer initialNotifications={notifications} />;
+      return <NotificationsContainer 
+        initialNotifications={await fetchNotifications(session)} 
+        session={session} 
+      />;
 
     default:
       return null;

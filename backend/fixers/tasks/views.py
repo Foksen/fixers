@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from users.models import Role, User
 from users.permissions import IsModerator, IsSafeOrIsModerator
+from notifications.utils import create_task_status_notification, create_task_master_notification
 
 from .models import Task, TaskCategory, ServiceCenter
 from .serializers import TaskSerializer, TaskCategorySerializer, ServiceCenterSerializer, TaskCategoryInfoSerializer, \
@@ -65,18 +66,33 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         user = self.request.user
+        task = self.get_object()
+        old_status = task.status
+        old_master = task.master
+        
         if user.role in [Role.MASTER, Role.CLIENT, Role.MODERATOR]:
             if user.role == Role.MODERATOR:
                 master_id = self.request.data.get('master_id')
                 
                 if master_id == "null" or master_id == "" or master_id is None:
-                    serializer.save(master=None)
-                    return
+                    # Master being removed
+                    if old_master:
+                        serializer.save(master=None)
+                        create_task_master_notification(task, task.client, old_master, 'removed')
+                        return
+                    else:
+                        serializer.save(master=None)
+                        return
                 
                 try:
                     master = User.objects.get(id=master_id)
-                    serializer.save(master=master)
-                    return
+                    if old_master != master:
+                        serializer.save(master=master)
+                        create_task_master_notification(task, task.client, master, 'assigned')
+                        return
+                    else:
+                        serializer.save(master=master)
+                        return
                 except (User.DoesNotExist, ValueError):
                     pass
             
@@ -85,12 +101,19 @@ class TaskViewSet(viewsets.ModelViewSet):
                 
                 if master_id == "null" and serializer.instance.master == user:
                     serializer.save(master=None)
+                    create_task_master_notification(task, task.client, user, 'removed')
                     return
                 
                 if master_id and str(master_id) == str(user.id) and serializer.instance.master is None:
                     serializer.save(master=user)
+                    create_task_master_notification(task, task.client, user, 'assigned')
                     return
             
-            serializer.save()
+            status = self.request.data.get('status')
+            if status and status != old_status:
+                instance = serializer.save()
+                create_task_status_notification(instance, task.client, user)
+            else:
+                serializer.save()
         else:
             raise PermissionDenied("You do not have permission to update this task.")

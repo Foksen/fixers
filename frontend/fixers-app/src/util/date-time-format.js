@@ -14,11 +14,28 @@ const months = [
 ];
 
 export function formatDateTime(input) {
-  const [datePart, timePart] = input.split(" ");
-  const [day, month, year] = datePart.split(".").map(Number);
-  const [hours, minutes] = timePart.split(":").map(Number);
-
-  const inputDate = new Date(year, month - 1, day, hours, minutes);
+  if (!input) return "";
+  
+  let inputDate;
+  
+  if (input.includes('T') || input.includes('-')) {
+    inputDate = new Date(input);
+  } else {
+    const [datePart, timePart] = input.split(" ");
+    if (!datePart || !timePart) {
+      console.error("Invalid date format:", input);
+      return input;
+    }
+    
+    const [day, month, year] = datePart.split(".").map(Number);
+    const [hours, minutes] = timePart.split(":").map(Number);
+    inputDate = new Date(year, month - 1, day, hours, minutes);
+  }
+  
+  if (isNaN(inputDate.getTime())) {
+    console.error("Invalid date:", input);
+    return input;
+  }
 
   const now = new Date();
 
