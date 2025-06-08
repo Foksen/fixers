@@ -52,10 +52,13 @@ export function WorkingTasksContainer({
     [session]
   );
   
-  const updateTaskInList = useCallback((taskId, updatedTask) => {
-    setTasks(prevTasks => 
-      prevTasks.map(task => task.id === taskId ? updatedTask : task)
-    );
+  const updateTaskInList = useCallback((taskId, updatedTask, shouldRemove = false) => {
+    setTasks(prevTasks => {
+      if (shouldRemove || (updatedTask && updatedTask.master === null)) {
+        return prevTasks.filter(task => task.id !== taskId);
+      }
+      return prevTasks.map(task => task.id === taskId ? updatedTask : task);
+    });
   }, []);
 
   useEffect(() => {

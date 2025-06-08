@@ -24,33 +24,102 @@ const TaskGridItemMenu = ({
 }) => {
   const isModerator = role === USER_ROLE.MODERATOR;
   const isMaster = role === USER_ROLE.MASTER;
-  const canChangeStatus = isModerator || isMaster;
+  const currentMasterId = session?.user?.id;
+  const isTaskAssignedToCurrentMaster = isMaster && taskInfo.master === currentMasterId;
+  const isTaskUnassigned = !taskInfo.master;
+  
+  const canChangeStatus = isModerator || isTaskAssignedToCurrentMaster;
   
   const handleStatusChange = async (status) => {
     if (status === taskInfo.status) return;
     
     try {
-      const taskData = {
-        description: taskInfo.description,
-        status: status,
-        category: taskInfo.category,
-        service_center: taskInfo.service_center,
-        master: taskInfo.master
-      };
-
-      const response = await putTask(session.accessToken, taskInfo.id, taskData);
+      if (!canChangeStatus) return;
       
-      if (response && onStatusChange) {
+      let submitData = isModerator
+        ? {
+            description: taskInfo.description,
+            status: status,
+            category: taskInfo.category,
+            service_center: taskInfo.service_center,
+            master_id: taskInfo.master ? taskInfo.master.toString() : "null"
+          }
+        : {
+            description: taskInfo.description,
+            status: status,
+            category: taskInfo.category,
+            service_center: taskInfo.service_center
+          };
+
+      const response = await putTask(session.accessToken, taskInfo.id, submitData);
+      
+      if (response) {
         const updatedTask = {
           ...taskInfo,
-          status: response.status || status,
-          modified_at: response.modified_at || new Date().toISOString()
+          status: response.status,
+          modified_at: response.modified_at,
+          created_at: response.created_at
         };
         
         onStatusChange(updatedTask);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
+  };
+  
+  const handleTakeTask = async () => {
+    try {
+      if (!isModerator && !isMaster) return;
+
+      let submitData = {
+        description: taskInfo.description,
+        status: taskInfo.status,
+        category: taskInfo.category,
+        service_center: taskInfo.service_center,
+        master_id: currentMasterId
+      };
+
+      const response = await putTask(session.accessToken, taskInfo.id, submitData);
+      
+      if (response) {
+        const updatedTask = {
+          ...taskInfo,
+          master: response.master,
+          master_username: response.master_username,
+          modified_at: response.modified_at,
+          created_at: response.created_at
+        };
+        
+        onStatusChange(updatedTask);
+      }
+    } catch (error) {}
+  };
+
+  const handleDetachFromTask = async () => {
+    try {
+      if (!isModerator && !isTaskAssignedToCurrentMaster) return;
+      
+      let submitData = {
+        description: taskInfo.description,
+        status: taskInfo.status,
+        category: taskInfo.category,
+        service_center: taskInfo.service_center,
+        master_id: "null"
+      };
+
+      const response = await putTask(session.accessToken, taskInfo.id, submitData);
+      
+      if (response) {
+        const updatedTask = {
+          ...taskInfo,
+          master: response.master,
+          master_username: response.master_username,
+          modified_at: response.modified_at,
+          created_at: response.created_at
+        };
+        
+        onStatusChange(updatedTask, true);
+      }
+    } catch (error) {}
   };
 
   return (
@@ -92,6 +161,26 @@ const TaskGridItemMenu = ({
                   </Menu.Positioner>
                 </Portal>
               </Menu.Root>
+            )}
+
+            {isMaster && !isTaskAssignedToCurrentMaster && (
+              <Menu.Item
+                value="take-task"
+                cursor="pointer"
+                onClick={handleTakeTask}
+              >
+                Взять в работу
+              </Menu.Item>
+            )}
+
+            {isTaskAssignedToCurrentMaster && (
+              <Menu.Item
+                value="detach"
+                cursor="pointer"
+                onClick={handleDetachFromTask}
+              >
+                Отказаться от заявки
+              </Menu.Item>
             )}
 
             {isModerator && (

@@ -39,7 +39,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = '__all__'
-        read_only_fields = ['client', 'master', 'created_at', 'modified_at']
+        read_only_fields = ['client', 'created_at', 'modified_at']
 
     def validate(self, attrs):
         errors = {}

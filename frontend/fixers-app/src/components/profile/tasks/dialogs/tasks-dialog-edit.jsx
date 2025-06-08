@@ -178,6 +178,7 @@ export function TasksDialogEdit({
         master: response.master,
         master_username: masterName,
         modified_at: response.modified_at,
+        created_at: response.created_at
       };
       
       updateTaskInfo(response.id, updatedTask);

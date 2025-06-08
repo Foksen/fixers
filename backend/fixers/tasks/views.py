@@ -80,6 +80,17 @@ class TaskViewSet(viewsets.ModelViewSet):
                 except (User.DoesNotExist, ValueError):
                     pass
             
+            elif user.role == Role.MASTER:
+                master_id = self.request.data.get('master_id')
+                
+                if master_id == "null" and serializer.instance.master == user:
+                    serializer.save(master=None)
+                    return
+                
+                if master_id and str(master_id) == str(user.id) and serializer.instance.master is None:
+                    serializer.save(master=user)
+                    return
+            
             serializer.save()
         else:
             raise PermissionDenied("You do not have permission to update this task.")
