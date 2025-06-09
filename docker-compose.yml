@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    volumes:
+      - fixers_postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    volumes:
+      - ./backend:/app
+      - static_volume:/app/fixers/staticfiles
+      - media_volume:/app/fixers/media
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DEBUG=true
+      - PRODUCTION=true
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - frontend_build:/app/fixers-app/.next
+    env_file:
+      - ./.env
+    environment:
+      - BACKEND_URL=http://backend:8000
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:1.21
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/var/html/static/
+      - media_volume:/var/html/media/
+      - frontend_build:/var/html/frontend/
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+
+volumes:
+  fixers_postgres_data:
+  static_volume:
+  media_volume:
+  frontend_build: 

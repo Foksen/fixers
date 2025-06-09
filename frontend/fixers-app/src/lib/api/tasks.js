@@ -1,21 +1,21 @@
 import { backendFetch } from "./fetcher";
 
 export async function getCategories(filters) {
-  return backendFetch("/api/tasks/categories/", {
+  return backendFetch("/tasks/categories/", {
     method: "GET",
     params: filters,
   });
 }
 
 export async function getCategoriesInfos(accessToken) {
-  return backendFetch("/api/tasks/categories-infos", {
+  return backendFetch("/tasks/categories-infos", {
     method: "GET",
     accessToken: accessToken,
   });
 }
 
 export async function createCategory(accessToken, categoryData) {
-  return backendFetch("/api/tasks/categories/", {
+  return backendFetch("/tasks/categories/", {
     method: "POST",
     accessToken: accessToken,
     data: categoryData,
@@ -23,7 +23,7 @@ export async function createCategory(accessToken, categoryData) {
 }
 
 export async function putCategory(accessToken, categoryId, categoryData) {
-  return backendFetch(`/api/tasks/categories/${categoryId}/`, {
+  return backendFetch(`/tasks/categories/${categoryId}/`, {
     method: "PUT",
     accessToken: accessToken,
     data: categoryData,
@@ -31,21 +31,21 @@ export async function putCategory(accessToken, categoryId, categoryData) {
 }
 
 export async function deleteCategory(accessToken, categoryId) {
-  return backendFetch(`/api/tasks/categories/${categoryId}/`, {
+  return backendFetch(`/tasks/categories/${categoryId}/`, {
     method: "DELETE",
     accessToken: accessToken,
   });
 }
 
 export async function getServiceCenters(filters) {
-  return backendFetch("/api/tasks/service-centers/", {
+  return backendFetch("/tasks/service-centers/", {
     method: "GET",
     params: filters,
   });
 }
 
 export async function getServiceCentersInfos(accessToken) {
-  return backendFetch("/api/tasks/service-centers-infos/", {
+  return backendFetch("/tasks/service-centers-infos/", {
     method: "GET",
     accessToken: accessToken,
   });

@@ -1,14 +1,14 @@
 import { backendFetch } from "./fetcher";
 
 export async function getUserInfos(accessToken) {
-  return backendFetch("/api/users/infos/", {
+  return backendFetch("/users/infos/", {
     method: "GET",
     accessToken: accessToken,
   });
 }
 
 export async function getUsers(accessToken, filters) {
-  return backendFetch("/api/users/users/", {
+  return backendFetch("/users/users/", {
     method: "GET",
     accessToken: accessToken,
     params: filters,
@@ -16,7 +16,7 @@ export async function getUsers(accessToken, filters) {
 }
 
 export async function patchUser(accessToken, userId, data) {
-  return backendFetch(`/api/users/users/${userId}/`, {
+  return backendFetch(`/users/users/${userId}/`, {
     method: "PATCH",
     accessToken: accessToken,
     data: data,
@@ -24,7 +24,7 @@ export async function patchUser(accessToken, userId, data) {
 }
 
 export async function deleteUser(accessToken, userId) {
-  return backendFetch(`/api/users/users/${userId}/`, {
+  return backendFetch(`/users/users/${userId}/`, {
     method: "DELETE",
     accessToken: accessToken,
   });

@@ -6,7 +6,7 @@ import { Center } from "@chakra-ui/react";
 
 export default function AuthPage() {
   return (
-    <Center minHeight="dvh">
+    <Center minHeight="dvh" position="relative">
       <Toaster />
       <AuthContainer />
     </Center>
